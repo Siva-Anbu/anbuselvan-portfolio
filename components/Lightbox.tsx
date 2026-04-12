@@ -18,9 +18,17 @@ interface LightboxProps {
 export default function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
   const [index, setIndex] = useState(initialIndex);
   const [loaded, setLoaded] = useState(false);
+  const [dims, setDims] = useState({ width: 1200, height: 800 });
 
-  const prev = useCallback(() => { setLoaded(false); setIndex((i) => (i - 1 + images.length) % images.length); }, [images.length]);
-  const next = useCallback(() => { setLoaded(false); setIndex((i) => (i + 1) % images.length); }, [images.length]);
+  const prev = useCallback(() => {
+    setLoaded(false);
+    setIndex((i) => (i - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  const next = useCallback(() => {
+    setLoaded(false);
+    setIndex((i) => (i + 1) % images.length);
+  }, [images.length]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -29,36 +37,88 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
       if (e.key === 'ArrowRight') next();
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
   }, [onClose, prev, next]);
 
   const current = images[index];
 
   return (
-    <div className="lightbox-overlay" onClick={onClose}>
-      <div className="relative max-w-[92vw] max-h-[88vh] w-full h-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-        <div className={`relative transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`} style={{ maxWidth: '90vw', maxHeight: '85vh' }}>
-          <Image src={current.url} alt={current.alt} width={1400} height={900}
-            className="object-contain max-h-[85vh] max-w-[90vw] w-auto h-auto"
-            quality={95} onLoad={() => setLoaded(true)} />
+    <div
+      className="fixed inset-0 z-[1000] bg-black flex items-center justify-center"
+      onClick={onClose}
+    >
+      {/* Image container - fills screen, no black bars */}
+      <div
+        className="relative w-full h-full flex items-center justify-center p-4 md:p-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={`relative transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          style={{ maxWidth: '94vw', maxHeight: '92vh' }}>
+          <img
+            src={current.url}
+            alt={current.alt}
+            onLoad={(e) => {
+              const img = e.target as HTMLImageElement;
+              setDims({ width: img.naturalWidth, height: img.naturalHeight });
+              setLoaded(true);
+            }}
+            style={{
+              maxWidth: '94vw',
+              maxHeight: '90vh',
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+              display: 'block',
+            }}
+          />
         </div>
+
+        {/* Prev / Next */}
         {images.length > 1 && (
           <>
-            <button onClick={prev} className="absolute left-0 md:-left-16 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-colors" aria-label="Previous">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><line x1="20" y1="8" x2="12" y2="16" stroke="currentColor" strokeWidth="1.5" /><line x1="12" y1="16" x2="20" y2="24" stroke="currentColor" strokeWidth="1.5" /></svg>
+            <button onClick={prev}
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/50 hover:text-white bg-black/40 hover:bg-black/70 rounded-full transition-all"
+              aria-label="Previous">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M13 4L7 10L13 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
             </button>
-            <button onClick={next} className="absolute right-0 md:-right-16 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-colors" aria-label="Next">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><line x1="12" y1="8" x2="20" y2="16" stroke="currentColor" strokeWidth="1.5" /><line x1="20" y1="16" x2="12" y2="24" stroke="currentColor" strokeWidth="1.5" /></svg>
+            <button onClick={next}
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/50 hover:text-white bg-black/40 hover:bg-black/70 rounded-full transition-all"
+              aria-label="Next">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7 4L13 10L7 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
             </button>
           </>
         )}
       </div>
-      <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors" aria-label="Close">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><line x1="4" y1="4" x2="20" y2="20" stroke="currentColor" strokeWidth="1.5" /><line x1="20" y1="4" x2="4" y2="20" stroke="currentColor" strokeWidth="1.5" /></svg>
+
+      {/* Close button */}
+      <button onClick={onClose}
+        className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white bg-black/40 hover:bg-black/70 rounded-full transition-all z-10"
+        aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
       </button>
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-[0.3em] text-white/30">
+
+      {/* Counter */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-[0.3em] text-white/30">
         {String(index + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
       </div>
+
+      {/* Caption */}
+      {current.alt && (
+        <div className="absolute bottom-4 right-6 font-mono text-[9px] tracking-widest uppercase text-white/20 hidden md:block">
+          {current.alt}
+        </div>
+      )}
     </div>
   );
 }

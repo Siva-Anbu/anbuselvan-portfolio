@@ -28,7 +28,7 @@ export default function AboutPage() {
           <div className="lg:col-span-2 order-2 lg:order-1">
             <div className="relative overflow-hidden bg-white/5 sticky top-32" style={{ aspectRatio: '3/4' }}>
               <Image
-                src="https://res.cloudinary.com/dnqfhp432/image/upload/w_800,q_85,f_auto/DJI_0296-3_uhfajl"
+                src="https://res.cloudinary.com/dnqfhp432/image/upload/w_800,q_90,f_auto/Anbuselvan"
                 alt="Anbuselvan Sivaraju — photographer"
                 fill
                 className="object-cover"
@@ -99,7 +99,7 @@ export default function AboutPage() {
               <div className="grid grid-cols-3 gap-6 mt-14 pt-10 border-t border-white/5">
                 {[
                   { value: '35+', label: 'Countries' },
-                  { value: '2000', label: 'Since' },
+                  { value: '2002', label: 'Since' },
                   { value: '20+', label: 'Years' },
                 ].map(({ value, label }) => (
                   <div key={label}>
@@ -119,7 +119,7 @@ export default function AboutPage() {
                   In My Bag
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  {['Sony A7 IV', '24-70mm f/2.8', '85mm f/1.4', '16-35mm f/4', 'ND Filters', 'Gorilla Pod'].map((item) => (
+                  {['Sony A6400', '18-135mm', 'DJI Mini 3 Pro', 'GoPro 7'].map((item) => (
                     <span key={item}
                       className="font-mono text-[9px] tracking-[0.15em] uppercase px-3 py-1.5 border border-white/10 text-white/35">
                       {item}

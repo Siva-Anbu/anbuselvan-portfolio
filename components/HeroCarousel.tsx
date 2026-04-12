@@ -12,8 +12,8 @@ const photoQuotes = [
   { text: 'Photography is a tool to freeze a moment that speaks volumes.', author: 'Anbuselvan Sivaraju' },
   { text: 'The best photograph is one that you feel rather than see.', author: 'Anonymous' },
   { text: 'A photograph is a secret about a secret. The more it tells you, the less you know.', author: 'Diane Arbus' },
-  { text: 'To photograph is to hold one\'s breath when all faculties converge to capture fleeting reality.', author: 'Henri Cartier-Bresson' },
-  { text: 'Which of my photographs is my favorite? The one I\'m going to take tomorrow.', author: 'Imogen Cunningham' },
+  { text: 'To photograph is to hold breath when all faculties converge to capture fleeting reality.', author: 'Henri Cartier-Bresson' },
+  { text: 'Which of my photographs is my favorite? The one I am going to take tomorrow.', author: 'Imogen Cunningham' },
   { text: 'Photography is the story I fail to put into words.', author: 'Destin Sparks' },
 ];
 
@@ -27,14 +27,12 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
     setCurrent((c) => (c + 1) % images.length);
   }, [images.length]);
 
-  // Carousel auto-advance
   useEffect(() => {
     if (images.length === 0) return;
     const timer = setInterval(advance, 6000);
     return () => clearInterval(timer);
   }, [advance, images.length]);
 
-  // Quote rotation every 8 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setQuoteFade(false);
@@ -57,7 +55,7 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
   const quote = photoQuotes[quoteIndex];
 
   return (
-    <section className="relative w-full h-screen overflow-hidden noise-overlay">
+    <section className="relative w-full h-screen overflow-hidden">
       {/* Images */}
       {images.map((img, i) => (
         <div key={img.id} className="absolute inset-0 transition-opacity duration-[2500ms] ease-in-out"
@@ -68,42 +66,55 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
               className="object-cover" sizes="100vw" quality={90}
               onLoad={() => i === 0 && setLoading(false)} />
           </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
         </div>
       ))}
 
-      {/* Hero text overlay */}
-      <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6 transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
+      {/* Hero text */}
+      <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 md:px-16 transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
 
-        {/* Tag line */}
-        <p className="font-mono text-[10px] md:text-xs tracking-[0.4em] uppercase text-white/40 animate-fade-in mb-6"
-          style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
-          Travel Photography
-        </p>
-
-        {/* Main heading */}
-        <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-light text-white leading-[1.05] animate-slide-up"
-          style={{ animationDelay: '0.5s', animationFillMode: 'both' }}>
-          Photography is a tool to freeze
-          <br /><em>a moment that speaks volumes.</em>
-        </h1>
+        {/* Main quote — large serif, elegant */}
+        <div className="max-w-5xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+          <h1 style={{
+            fontFamily: '"Cormorant Garamond", Georgia, serif',
+            fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+            fontWeight: 300,
+            lineHeight: 1.12,
+            letterSpacing: '0.01em',
+            color: 'rgba(255,255,255,0.95)',
+          }}>
+            Photography is a tool to freeze
+            <br />
+            <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,1)' }}>
+              a moment that speaks volumes.
+            </span>
+          </h1>
+        </div>
 
         {/* Name */}
-        <p className="font-display italic text-lg md:text-xl font-light mt-5 animate-fade-in"
-          style={{ color: 'var(--accent)', animationDelay: '1s', animationFillMode: 'both' }}>
+        <p className="mt-8 animate-fade-in" style={{
+          fontFamily: '"Cormorant Garamond", Georgia, serif',
+          fontStyle: 'italic',
+          fontSize: 'clamp(1rem, 2vw, 1.35rem)',
+          fontWeight: 300,
+          color: 'var(--accent)',
+          animationDelay: '1s',
+          animationFillMode: 'both',
+        }}>
           Anbuselvan Sivaraju
         </p>
 
-        {/* Tagline under name */}
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/35 mt-2 animate-fade-in"
-          style={{ animationDelay: '1.3s', animationFillMode: 'both' }}>
-          Captured, not created
-        </p>
-
-        {/* Rotating quote — bottom center */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-full max-w-lg px-6 text-center">
+        {/* Rotating quote bottom */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-full max-w-lg px-6 text-center">
           <div className="transition-opacity duration-500" style={{ opacity: quoteFade ? 1 : 0 }}>
-            <p className="font-display italic text-sm md:text-base font-light text-white/50 leading-relaxed">
+            <p style={{
+              fontFamily: '"Cormorant Garamond", Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: '0.95rem',
+              fontWeight: 300,
+              color: 'rgba(255,255,255,0.45)',
+              lineHeight: 1.6,
+            }}>
               &ldquo;{quote.text}&rdquo;
             </p>
             <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/25 mt-2">

@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
+import { getAboutPortrait } from '@/lib/cloudinary';
 
 export const metadata = {
   title: 'About — Anbuselvan Sivaraju',
   description: 'Copenhagen-based travel and street photographer with over two decades behind the lens.',
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const portraitUrl = await getAboutPortrait();
   return (
     <main className="min-h-screen">
       {/* Header */}
@@ -27,14 +29,22 @@ export default function AboutPage() {
           {/* Portrait */}
           <div className="lg:col-span-2 order-2 lg:order-1">
             <div className="relative overflow-hidden bg-[#1a1a1a] sticky top-32" style={{ aspectRatio: '3/4' }}>
-              <Image
-                src="https://res.cloudinary.com/dnqfhp432/image/upload/w_800,h_1067,c_fill,g_face,b_rgb:111111,f_jpg,q_90/Mainpage/Anbuselvan"
-                alt="Anbuselvan Sivaraju — photographer"
-                fill
-                className="object-cover"
-                quality={85}
-                sizes="(max-width: 1024px) 100vw, 40vw"
-              />
+              {portraitUrl ? (
+                <Image
+                  src={portraitUrl}
+                  alt="Anbuselvan Sivaraju — photographer"
+                  fill
+                  className="object-cover"
+                  quality={90}
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="font-mono text-[10px] tracking-widest uppercase text-white/20">
+                    Portrait coming soon
+                  </p>
+                </div>
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               <div className="absolute bottom-0 left-0 p-6">
                 <p className="font-display text-lg italic font-light" style={{ color: 'var(--accent)' }}>

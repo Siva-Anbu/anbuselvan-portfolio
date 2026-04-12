@@ -170,10 +170,8 @@ export async function getAllImages(): Promise<CloudinaryImage[]> {
 
 export async function getHeroImages(): Promise<CloudinaryImage[]> {
   const images = await getAllImages();
-  // Hero = tagged 'hero' OR in Mainpage folder
-  return images.filter(img =>
-    img.tags.includes('hero') || img.folder === 'Mainpage'
-  );
+  // ONLY images explicitly tagged 'hero' — nothing else
+  return images.filter(img => img.tags.includes('hero'));
 }
 
 export async function getFeaturedSets(): Promise<FeaturedSet[]> {
@@ -260,6 +258,6 @@ export async function getSiteStats() {
   const countries = await getCountries();
   return {
     countries: countries.length,
-    photographs: images.filter(img => !img.tags.includes('hero') && img.folder !== 'Mainpage').length,
+    photographs: images.filter(img => !img.tags.includes('hero')).length,
   };
 }

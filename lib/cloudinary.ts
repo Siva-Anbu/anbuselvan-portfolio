@@ -62,19 +62,32 @@ export interface Country {
 // ─── COUNTRY META (display name + year — the only thing you ever add here) ───
 // When you add a new country tag to Cloudinary photos, just add one line here.
 const COUNTRY_META: Record<string, { name: string; visitedYear?: string }> = {
-  iceland:     { name: 'Iceland',         visitedYear: '2024' },
-  denmark:     { name: 'Denmark',         visitedYear: '2023–2025' },
-  france:      { name: 'France',          visitedYear: '2023' },
-  kenya:       { name: 'Kenya',           visitedYear: '2024' },
-  india:       { name: 'India',           visitedYear: '2019–2024' },
-  japan:       { name: 'Japan',           visitedYear: '2023' },
-  norway:      { name: 'Norway',          visitedYear: '2025' },
-  switzerland: { name: 'Switzerland',     visitedYear: '2025' },
-  italy:       { name: 'Italy',           visitedYear: '2023' },
-  spain:       { name: 'Spain',           visitedYear: '2023' },
-  netherlands: { name: 'Netherlands',     visitedYear: '2022' },
-  germany:     { name: 'Germany',         visitedYear: '2023' },
-  // Add new countries here as you travel
+  // Capitalized versions (matching Cloudinary tags)
+  Iceland:     { name: 'Iceland',      visitedYear: '2024' },
+  Denmark:     { name: 'Denmark',      visitedYear: '2023–2025' },
+  France:      { name: 'France',       visitedYear: '2023' },
+  Kenya:       { name: 'Kenya',        visitedYear: '2024' },
+  India:       { name: 'India',        visitedYear: '2019–2024' },
+  Japan:       { name: 'Japan',        visitedYear: '2023' },
+  Norway:      { name: 'Norway',       visitedYear: '2025' },
+  Switzerland: { name: 'Switzerland',  visitedYear: '2025' },
+  Italy:       { name: 'Italy',        visitedYear: '2023' },
+  Spain:       { name: 'Spain',        visitedYear: '2023' },
+  Netherlands: { name: 'Netherlands',  visitedYear: '2022' },
+  Germany:     { name: 'Germany',      visitedYear: '2023' },
+  // Lowercase versions (fallback, just in case)
+  iceland:     { name: 'Iceland',      visitedYear: '2024' },
+  denmark:     { name: 'Denmark',      visitedYear: '2023–2025' },
+  france:      { name: 'France',       visitedYear: '2023' },
+  kenya:       { name: 'Kenya',        visitedYear: '2024' },
+  india:       { name: 'India',        visitedYear: '2019–2024' },
+  japan:       { name: 'Japan',        visitedYear: '2023' },
+  norway:      { name: 'Norway',       visitedYear: '2025' },
+  switzerland: { name: 'Switzerland',  visitedYear: '2025' },
+  italy:       { name: 'Italy',        visitedYear: '2023' },
+  spain:       { name: 'Spain',        visitedYear: '2023' },
+  netherlands: { name: 'Netherlands',  visitedYear: '2022' },
+  germany:     { name: 'Germany',      visitedYear: '2023' },
 };
 
 // ─── FEATURED SET META ────────────────────────────────────────────────────────
@@ -209,15 +222,13 @@ const ALL_CATEGORY_TAGS = [
 export async function getCountries(): Promise<Country[]> {
   const images = await getAllImages();
 
-  // ONLY use tags that are explicitly defined in COUNTRY_META
-  // This prevents random tags (like 'Anbuselvan', 'Paris', etc.) from appearing as countries
+  // Only use tags that exist in COUNTRY_META (both cases supported)
   const validCountrySlugs = Object.keys(COUNTRY_META);
 
-  return validCountrySlugs
+  const results = validCountrySlugs
     .map(slug => {
       const countryImages = images.filter(img => img.tags.includes(slug));
       const meta = COUNTRY_META[slug];
-
       return {
         slug,
         name: meta.name,
@@ -226,7 +237,16 @@ export async function getCountries(): Promise<Country[]> {
         images: countryImages,
       };
     })
-    .filter(c => c.images.length > 0) // Only show countries that actually have photos
+    .filter(c => c.images.length > 0);
+
+  // Deduplicate by name (handles both Iceland and iceland pointing to same country)
+  const seen = new Set<string>();
+  return results
+    .filter(c => {
+      if (seen.has(c.name)) return false;
+      seen.add(c.name);
+      return true;
+    })
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 

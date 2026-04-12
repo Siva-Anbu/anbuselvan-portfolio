@@ -73,51 +73,38 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
       {/* Hero text */}
       <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 md:px-16 transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
 
-        {/* Main quote — large serif, elegant */}
-        <div className="max-w-5xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+        {/* Main quote — slightly smaller, more refined */}
+        <div className="max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
           <h1 style={{
             fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontSize: 'clamp(2.4rem, 6vw, 5.5rem)',
+            fontSize: 'clamp(1.8rem, 4vw, 3.8rem)',
             fontWeight: 300,
-            lineHeight: 1.12,
+            lineHeight: 1.15,
             letterSpacing: '0.01em',
             color: 'rgba(255,255,255,0.95)',
           }}>
             Photography is a tool to freeze
             <br />
-            <span style={{ fontStyle: 'italic', color: 'rgba(255,255,255,1)' }}>
+            <span style={{ fontStyle: 'italic' }}>
               a moment that speaks volumes.
             </span>
           </h1>
         </div>
 
-        {/* Name */}
-        <p className="mt-8 animate-fade-in" style={{
-          fontFamily: '"Cormorant Garamond", Georgia, serif',
-          fontStyle: 'italic',
-          fontSize: 'clamp(1rem, 2vw, 1.35rem)',
-          fontWeight: 300,
-          color: 'var(--accent)',
-          animationDelay: '1s',
-          animationFillMode: 'both',
-        }}>
-          Anbuselvan Sivaraju
-        </p>
-
-        {/* Rotating quote bottom */}
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-full max-w-lg px-6 text-center">
+        {/* Rotating quote bottom — bigger */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 text-center">
           <div className="transition-opacity duration-500" style={{ opacity: quoteFade ? 1 : 0 }}>
             <p style={{
               fontFamily: '"Cormorant Garamond", Georgia, serif',
               fontStyle: 'italic',
-              fontSize: '0.95rem',
+              fontSize: 'clamp(1.1rem, 2.2vw, 1.5rem)',
               fontWeight: 300,
-              color: 'rgba(255,255,255,0.45)',
+              color: 'rgba(255,255,255,0.55)',
               lineHeight: 1.6,
             }}>
               &ldquo;{quote.text}&rdquo;
             </p>
-            <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/25 mt-2">
+            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/30 mt-3">
               {quote.author}
             </p>
           </div>

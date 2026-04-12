@@ -7,17 +7,17 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
           {/* Brand */}
           <div>
-            <p className="font-display text-2xl font-light text-white/80 mb-1">
+            <p className="font-display text-2xl font-light tracking-[0.08em] uppercase text-white/80 mb-1">
               Anbuselvan
             </p>
             <p
-              className="font-mono text-[10px] tracking-[0.35em] uppercase mb-4"
+              className="font-display text-2xl font-light tracking-[0.08em] uppercase mb-4"
               style={{ color: 'var(--accent)' }}
             >
               Sivaraju
             </p>
             <p className="font-body text-[12px] text-white/30 leading-relaxed max-w-xs">
-              Travel photographer documenting light, texture, and quiet moments across the world.
+              Photographer documenting light, texture, and quiet moments across the world.
             </p>
           </div>
 
@@ -69,7 +69,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Anbuselvan Sivaraju. All rights reserved.
           </p>
           <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/15">
-            Photography · Travel · Moments
+            Photography · Moments
           </p>
         </div>
       </div>

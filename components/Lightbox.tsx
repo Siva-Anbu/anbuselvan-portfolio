@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
 
 export interface LightboxImage {
   id: string;
@@ -18,7 +17,6 @@ interface LightboxProps {
 export default function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
   const [index, setIndex] = useState(initialIndex);
   const [loaded, setLoaded] = useState(false);
-  const [dims, setDims] = useState({ width: 1200, height: 800 });
 
   const prev = useCallback(() => {
     setLoaded(false);
@@ -37,7 +35,6 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
       if (e.key === 'ArrowRight') next();
     };
     window.addEventListener('keydown', onKey);
-    // Prevent body scroll
     document.body.style.overflow = 'hidden';
     return () => {
       window.removeEventListener('keydown', onKey);
@@ -49,76 +46,76 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
 
   return (
     <div
-      className="fixed inset-0 z-[1000] bg-black flex items-center justify-center"
+      className="fixed inset-0 z-[1000] bg-black"
       onClick={onClose}
     >
-      {/* Image container - fills screen, no black bars */}
+      {/* Full screen image — no wrappers causing black space */}
       <div
-        className="relative w-full h-full flex items-center justify-center p-4 md:p-10"
+        className="absolute inset-0 flex items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`relative transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
-          style={{ maxWidth: '94vw', maxHeight: '92vh' }}>
-          <img
-            src={current.url}
-            alt={current.alt}
-            onLoad={(e) => {
-              const img = e.target as HTMLImageElement;
-              setDims({ width: img.naturalWidth, height: img.naturalHeight });
-              setLoaded(true);
-            }}
-            style={{
-              maxWidth: '94vw',
-              maxHeight: '90vh',
-              width: 'auto',
-              height: 'auto',
-              objectFit: 'contain',
-              display: 'block',
-            }}
-          />
-        </div>
-
-        {/* Prev / Next */}
-        {images.length > 1 && (
-          <>
-            <button onClick={prev}
-              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/50 hover:text-white bg-black/40 hover:bg-black/70 rounded-full transition-all"
-              aria-label="Previous">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M13 4L7 10L13 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <button onClick={next}
-              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white/50 hover:text-white bg-black/40 hover:bg-black/70 rounded-full transition-all"
-              aria-label="Next">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M7 4L13 10L7 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-          </>
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          key={current.url}
+          src={current.url}
+          alt={current.alt}
+          onLoad={() => setLoaded(true)}
+          style={{
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            width: 'auto',
+            height: 'auto',
+            objectFit: 'contain',
+            opacity: loaded ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            display: 'block',
+          }}
+        />
       </div>
 
+      {/* Gradient overlays top and bottom for controls visibility */}
+      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-10" />
+
       {/* Close button */}
-      <button onClick={onClose}
-        className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white bg-black/40 hover:bg-black/70 rounded-full transition-all z-10"
-        aria-label="Close">
+      <button
+        onClick={onClose}
+        className="absolute top-5 right-5 z-20 w-10 h-10 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
+        aria-label="Close"
+      >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       </button>
 
+      {/* Prev / Next */}
+      {images.length > 1 && (
+        <>
+          <button
+            onClick={(e) => { e.stopPropagation(); prev(); }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
+            aria-label="Previous"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M11 4L6 9L11 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); next(); }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
+            aria-label="Next"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M7 4L12 9L7 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </>
+      )}
+
       {/* Counter */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-[0.3em] text-white/30">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 font-mono text-[10px] tracking-[0.3em] text-white/40">
         {String(index + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
       </div>
-
-      {/* Caption */}
-      {current.alt && (
-        <div className="absolute bottom-4 right-6 font-mono text-[9px] tracking-widest uppercase text-white/20 hidden md:block">
-          {current.alt}
-        </div>
-      )}
     </div>
   );
 }

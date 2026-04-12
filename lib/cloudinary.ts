@@ -90,7 +90,7 @@ const SET_META: Record<string, { title: string; subtitle: string }> = {
 
 // ─── URL BUILDERS ─────────────────────────────────────────────────────────────
 function buildUrl(publicId: string, width: number, quality: number): string {
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_${width},q_${quality},f_auto/${encodeURIComponent(publicId)}`;
+  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_${width},q_${quality},f_auto,e_improve:40,e_sharpen:30/${encodeURIComponent(publicId)}`;
 }
 
 // ─── MAIN FETCH FUNCTION ──────────────────────────────────────────────────────

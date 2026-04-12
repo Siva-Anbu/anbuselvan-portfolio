@@ -26,9 +26,9 @@ export default function AboutPage() {
 
           {/* Portrait */}
           <div className="lg:col-span-2 order-2 lg:order-1">
-            <div className="relative overflow-hidden bg-white/5 sticky top-32" style={{ aspectRatio: '3/4' }}>
+            <div className="relative overflow-hidden bg-[#1a1a1a] sticky top-32" style={{ aspectRatio: '3/4' }}>
               <Image
-                src="https://res.cloudinary.com/dnqfhp432/image/upload/w_800,q_90,f_auto/Anbuselvan"
+                src="https://res.cloudinary.com/dnqfhp432/image/upload/w_800,q_90,f_auto/Mainpage/Anbuselvan"
                 alt="Anbuselvan Sivaraju — photographer"
                 fill
                 className="object-cover"

@@ -209,26 +209,24 @@ const ALL_CATEGORY_TAGS = [
 export async function getCountries(): Promise<Country[]> {
   const images = await getAllImages();
 
-  // Find all tags that are NOT category tags — these are country tags
-  const allTags = Array.from(new Set(images.flatMap(img => img.tags)));
-  const countryTags = allTags.filter(
-    tag => !ALL_CATEGORY_TAGS.includes(tag)
-  );
+  // ONLY use tags that are explicitly defined in COUNTRY_META
+  // This prevents random tags (like 'Anbuselvan', 'Paris', etc.) from appearing as countries
+  const validCountrySlugs = Object.keys(COUNTRY_META);
 
-  return countryTags
+  return validCountrySlugs
     .map(slug => {
       const countryImages = images.filter(img => img.tags.includes(slug));
       const meta = COUNTRY_META[slug];
 
       return {
         slug,
-        name: meta?.name ?? slug.charAt(0).toUpperCase() + slug.slice(1), // Fallback: capitalize slug
-        visitedYear: meta?.visitedYear,
+        name: meta.name,
+        visitedYear: meta.visitedYear,
         coverImage: countryImages[0]?.thumbUrl ?? '',
         images: countryImages,
       };
     })
-    .filter(c => c.images.length > 0)
+    .filter(c => c.images.length > 0) // Only show countries that actually have photos
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 

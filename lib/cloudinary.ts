@@ -46,7 +46,7 @@ export interface FeaturedSet {
   slug: string;
   title: string;
   subtitle: string;
-  tag: CategoryTag;
+  tag: string;
   coverImage: string;
   images: CloudinaryImage[];
 }
@@ -210,8 +210,8 @@ export async function getCountries(): Promise<Country[]> {
   const images = await getAllImages();
 
   // Find all tags that are NOT category tags — these are country tags
-  const allTags = new Set(images.flatMap(img => img.tags));
-  const countryTags = [...allTags].filter(
+  const allTags = Array.from(new Set(images.flatMap(img => img.tags)));
+  const countryTags = allTags.filter(
     tag => !ALL_CATEGORY_TAGS.includes(tag)
   );
 

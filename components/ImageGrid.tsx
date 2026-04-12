@@ -2,11 +2,16 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { Image as ImageType } from '@/data/portfolio';
 import Lightbox from './Lightbox';
 
+export interface GridImage {
+  id: string;
+  url: string;
+  alt: string;
+}
+
 interface ImageGridProps {
-  images: ImageType[];
+  images: GridImage[];
   columns?: 2 | 3 | 4;
 }
 

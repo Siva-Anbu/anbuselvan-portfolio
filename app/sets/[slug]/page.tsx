@@ -16,10 +16,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const set = await getSetBySlug(params.slug);
   if (!set) return {};
-  return {
-    title: `${set.title} — Anbuselvan Sivaraju`,
-    description: set.subtitle,
-  };
+  return { title: `${set.title} — Anbuselvan Sivaraju`, description: set.subtitle };
 }
 
 export default async function SetPage({ params }: { params: { slug: string } }) {
@@ -31,24 +28,18 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
   const prevSet = idx > 0 ? allSets[idx - 1] : null;
   const nextSet = idx < allSets.length - 1 ? allSets[idx + 1] : null;
 
-  const gridImages = set.images.map((img) => ({
-    id:  img.id,
-    url: img.url,
-    alt: img.alt,
-  }));
+  const gridImages = set.images.map((img) => ({ id: img.id, url: img.url, alt: img.alt }));
 
   return (
     <main className="min-h-screen bg-[#0a0a0a]">
-      {/* Hero banner */}
+      {/* Hero */}
       <div className="relative h-[45vh] overflow-hidden">
         {set.coverImage && (
-          <Image src={set.coverImage} alt={set.title} fill
-            className="object-cover" priority sizes="100vw" />
+          <Image src={set.coverImage} alt={set.title} fill className="object-cover" priority sizes="100vw" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 w-full px-6 md:px-12 max-w-[1600px] mx-auto pb-10">
-          <Link href="/sets"
-            className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors mb-6 inline-flex items-center gap-2">
+          <Link href="/sets" className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors mb-6 inline-flex items-center gap-2">
             ← All Sets
           </Link>
           <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/30 mb-2">Featured Set</p>
@@ -60,7 +51,7 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
         </div>
       </div>
 
-      {/* Gallery with lightbox */}
+      {/* Gallery */}
       <div className="px-6 md:px-12 max-w-[1600px] mx-auto py-12">
         <SetGallery images={gridImages} />
       </div>
@@ -92,7 +83,6 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
           ) : <div />}
         </div>
       </div>
-
       <Footer />
     </main>
   );

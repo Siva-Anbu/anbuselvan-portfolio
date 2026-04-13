@@ -14,32 +14,22 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: { country: string } }) {
-  return {
-    title: `${params.country} — Anbuselvan Sivaraju`,
-    description: `Photography from ${params.country}`,
-  };
+  return { title: `${params.country} — Anbuselvan Sivaraju`, description: `Photography from ${params.country}` };
 }
 
 export default async function CountryPage({ params }: { params: { country: string } }) {
   const country = await getCountryByName(params.country);
   if (!country) notFound();
 
-  const gridImages = country.images.map((img) => ({
-    id:  img.id,
-    url: img.url,
-    alt: img.alt,
-  }));
+  const gridImages = country.images.map((img) => ({ id: img.id, url: img.url, alt: img.alt }));
 
   return (
     <main className="min-h-screen bg-[#0a0a0a]">
-      {/* Hero banner */}
       <div className="relative h-[45vh] overflow-hidden">
-        <Image src={country.coverImage} alt={country.name} fill
-          className="object-cover" priority sizes="100vw" />
+        <Image src={country.coverImage} alt={country.name} fill className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 w-full px-6 md:px-12 max-w-[1600px] mx-auto pb-10">
-          <Link href="/countries"
-            className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors mb-6 inline-flex items-center gap-2">
+          <Link href="/countries" className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors mb-6 inline-flex items-center gap-2">
             ← All Countries
           </Link>
           {country.visitedYear && (
@@ -51,12 +41,9 @@ export default async function CountryPage({ params }: { params: { country: strin
           </p>
         </div>
       </div>
-
-      {/* Gallery with lightbox */}
       <div className="px-6 md:px-12 max-w-[1600px] mx-auto py-12">
         <SetGallery images={gridImages} />
       </div>
-
       <Footer />
     </main>
   );

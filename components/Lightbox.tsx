@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import Image from 'next/image';
 
-interface GalleryImage {
+export interface GalleryImage {
   id: string;
   url: string;
   alt: string;
 }
 
-function Lightbox({
+export default function Lightbox({
   images,
   index,
   onClose,
@@ -83,7 +82,6 @@ function Lightbox({
           position: 'relative',
         }}
       >
-        {/* Image */}
         <img
           key={img.url}
           src={img.url}
@@ -101,7 +99,7 @@ function Lightbox({
           }}
         />
 
-        {/* Transparent Overlay (blocks right-click & drag) */}
+        {/* Transparent overlay */}
         <div
           onContextMenu={(e) => e.preventDefault()}
           style={{
@@ -120,14 +118,7 @@ function Lightbox({
         }}
         style={{ ...btn, top: '16px', right: '16px' }}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16">
-          <path
-            d="M2 2L14 14M14 2L2 14"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          />
-        </svg>
+        ✕
       </button>
 
       {/* Prev */}
@@ -144,15 +135,7 @@ function Lightbox({
             transform: 'translateY(-50%)',
           }}
         >
-          <svg width="18" height="18" viewBox="0 0 18 18">
-            <path
-              d="M11 4L6 9L11 14"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          ‹
         </button>
       )}
 
@@ -170,15 +153,7 @@ function Lightbox({
             transform: 'translateY(-50%)',
           }}
         >
-          <svg width="18" height="18" viewBox="0 0 18 18">
-            <path
-              d="M7 4L12 9L7 14"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          ›
         </button>
       )}
 
@@ -203,86 +178,4 @@ function Lightbox({
   );
 
   return createPortal(content, document.body);
-}
-
-export default function SetGallery({
-  images,
-}: {
-  images: GalleryImage[];
-}) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const close = useCallback(() => setActiveIndex(null), []);
-  const prev = useCallback(
-    () =>
-      setActiveIndex((i) =>
-        i === null ? 0 : (i - 1 + images.length) % images.length
-      ),
-    [images.length]
-  );
-  const next = useCallback(
-    () =>
-      setActiveIndex((i) =>
-        i === null ? 0 : (i + 1) % images.length
-      ),
-    [images.length]
-  );
-
-  return (
-    <>
-      {/* Gallery Grid */}
-      <div
-        className="columns-1 md:columns-2 lg:columns-3 gap-3 space-y-3"
-        onContextMenu={(e) => e.preventDefault()}
-      >
-        {images.map((img, i) => (
-          <div
-            key={img.id}
-            className="break-inside-avoid cursor-pointer group relative overflow-hidden"
-            onClick={() => setActiveIndex(i)}
-          >
-            <Image
-              src={img.url}
-              alt={img.alt}
-              width={1200}
-              height={800}
-              draggable={false}
-              className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03]"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-
-            {/* Overlay for gallery */}
-            <div
-              className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"
-              onContextMenu={(e) => e.preventDefault()}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Lightbox */}
-      {mounted && activeIndex !== null && (
-        <Lightbox
-          images={images}
-          index={lightboxIndex ?? 0}
-          onClose={() => setLightboxIndex(null)}
-          onPrev={() =>
-            setLightboxIndex((i) =>
-              i === null ? 0 : (i - 1 + images.length) % images.length
-            )
-          }
-          onNext={() =>
-            setLightboxIndex((i) =>
-              i === null ? 0 : (i + 1) % images.length
-            )
-          }
-        />
-      )}
-    </>
-  );
 }

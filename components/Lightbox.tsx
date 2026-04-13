@@ -61,8 +61,8 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
           alt={current.alt}
           onLoad={() => setLoaded(true)}
           style={{
-            maxWidth: '100vw',
-            maxHeight: '100vh',
+            maxWidth: 'calc(100vw - 80px)',
+            maxHeight: 'calc(100vh - 80px)',
             width: 'auto',
             height: 'auto',
             objectFit: 'contain',
@@ -74,13 +74,13 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
       </div>
 
       {/* Gradient overlays top and bottom for controls visibility */}
-      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-10" />
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-10" />
+      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-[1010]" />
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-[1010]" />
 
       {/* Close button */}
       <button
         onClick={onClose}
-        className="absolute top-5 right-5 z-20 w-10 h-10 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
+        className="absolute top-5 right-5 z-[1010] w-10 h-10 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
         aria-label="Close"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -93,7 +93,7 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
         <>
           <button
             onClick={(e) => { e.stopPropagation(); prev(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-[1010] w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
             aria-label="Previous"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -102,7 +102,7 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); next(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-[1010] w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
             aria-label="Next"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -113,7 +113,7 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
       )}
 
       {/* Counter */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 font-mono text-[10px] tracking-[0.3em] text-white/40">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-[1010] font-mono text-[10px] tracking-[0.3em] text-white/40">
         {String(index + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
       </div>
     </div>

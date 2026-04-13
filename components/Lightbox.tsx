@@ -178,10 +178,13 @@ export default function Lightbox({
           position: 'fixed',
           bottom: '10px',
           right: '16px',
-          fontSize: '10px',
-          color: 'rgba(255,255,255,0.4)',
+          fontSize: '11px',
+          color: 'rgba(255,255,255,0.7)',
           zIndex: 2147483647,
           pointerEvents: 'none',
+          background: 'rgba(0,0,0,0.25)',
+          padding: '4px 8px',
+          borderRadius: '4px',
         }}
       >
         © Anbuselvan Sivaraju

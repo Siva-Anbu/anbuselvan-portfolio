@@ -1,255 +1,234 @@
 // lib/cloudinary.ts
 // ─────────────────────────────────────────────────────────────────────────────
-// SINGLE SOURCE OF TRUTH — TAGS ONLY
+// ALL data now comes from Cloudinary at build time.
+// No more editing data/portfolio.ts for new photos.
 //
-// How to tag your photos in Cloudinary:
+// TAGGING CONVENTION (apply these tags in Cloudinary console):
 //
-//  hero         → appears in homepage carousel
-//  aboutme      → appears as portrait on About page
-//  landscape    → appears in Landscape featured set
-//  drone        → appears in Drone featured set
-//  wildlife     → appears in Wildlife featured set
-//  lifescape    → appears in Lifescape featured set
-//  black-and-white OR blackandwhite → appears in B&W featured set
+//   SET tag   →  blackandwhite | landscape | lifescape | wildlife | drone
+//   COUNTRY   →  country:Nepal | country:France | country:Iceland  (etc.)
+//   YEAR      →  year:2024   (optional, used on country pages)
+//   TITLE     →  title stored as Cloudinary context field  alt="My Caption"
 //
-//  Iceland / Denmark / France / Kenya etc. → appears in that country page
-//
-//  A photo CAN have multiple tags:
-//  e.g. landscape + Iceland = shows in Landscape set AND Iceland country page
-//
-//  Photos with NO recognised tag are completely ignored everywhere.
+// Example for the Nepal B&W temple photo, add these tags in Cloudinary:
+//   blackandwhite
+//   country:Nepal
+//   year:2024
+//   And set context:  alt=Nepal Temple BW
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
 const API_KEY    = process.env.CLOUDINARY_API_KEY!;
 const API_SECRET = process.env.CLOUDINARY_API_SECRET!;
 
-// ─── ALL KNOWN CATEGORY TAGS (not countries, not aboutme) ────────────────────
-const CATEGORY_TAGS = [
-  'hero',
-  'aboutme',
-  'landscape',
-  'drone',
-  'wildlife',
-  'lifescape',
-  'black-and-white',
-  'blackandwhite',
-];
+// ── Types ────────────────────────────────────────────────────────────────────
 
-// ─── COUNTRY WHITELIST ────────────────────────────────────────────────────────
-// Add a new line here when you visit a new country.
-// The slug must EXACTLY match your Cloudinary tag (case-sensitive).
-const COUNTRY_META: Record<string, { name: string; visitedYear?: string }> = {
-  // Uppercase (as you tag in Cloudinary)
-  Iceland:      { name: 'Iceland',      visitedYear: '2024' },
-  Denmark:      { name: 'Denmark',      visitedYear: '2023-2025' },
-  France:       { name: 'France',       visitedYear: '2023' },
-  Kenya:        { name: 'Kenya',        visitedYear: '2024' },
-  India:        { name: 'India',        visitedYear: '2019-2024' },
-  Japan:        { name: 'Japan',        visitedYear: '2023' },
-  Norway:       { name: 'Norway',       visitedYear: '2025' },
-  Switzerland:  { name: 'Switzerland',  visitedYear: '2025' },
-  Italy:        { name: 'Italy',        visitedYear: '2023' },
-  Spain:        { name: 'Spain',        visitedYear: '2023' },
-  Netherlands:  { name: 'Netherlands',  visitedYear: '2022' },
-  Germany:      { name: 'Germany',      visitedYear: '2023' },
-  // Lowercase fallback
-  iceland:      { name: 'Iceland',      visitedYear: '2024' },
-  denmark:      { name: 'Denmark',      visitedYear: '2023-2025' },
-  france:       { name: 'France',       visitedYear: '2023' },
-  kenya:        { name: 'Kenya',        visitedYear: '2024' },
-  india:        { name: 'India',        visitedYear: '2019-2024' },
-  japan:        { name: 'Japan',        visitedYear: '2023' },
-  norway:       { name: 'Norway',       visitedYear: '2025' },
-  switzerland:  { name: 'Switzerland',  visitedYear: '2025' },
-  italy:        { name: 'Italy',        visitedYear: '2023' },
-  spain:        { name: 'Spain',        visitedYear: '2023' },
-  netherlands:  { name: 'Netherlands',  visitedYear: '2022' },
-  germany:      { name: 'Germany',      visitedYear: '2023' },
-};
-
-// ─── FEATURED SET DEFINITIONS ─────────────────────────────────────────────────
-const SET_DEFS = [
-  { slug: 'landscape',       tags: ['landscape'],                        title: 'Landscape',     subtitle: 'Earth, sky, and the space between' },
-  { slug: 'black-and-white', tags: ['black-and-white', 'blackandwhite'], title: 'Black & White', subtitle: 'When colour steps aside, truth remains' },
-  { slug: 'lifescape',       tags: ['lifescape'],                        title: 'Lifescape',     subtitle: 'People, streets, and quiet human moments' },
-  { slug: 'wildlife',        tags: ['wildlife'],                         title: 'Wildlife',       subtitle: 'Wild eyes, wild places' },
-  { slug: 'drone',           tags: ['drone'],                            title: 'Drone',          subtitle: 'The world seen from above' },
-];
-
-// ─── INTERFACES ───────────────────────────────────────────────────────────────
 export interface CloudinaryImage {
-  id: string;
-  publicId: string;
-  url: string;
-  thumbUrl: string;
-  heroUrl: string;
-  alt: string;
-  tags: string[];
-  folder: string;
+  publicId:   string;
+  url:        string;         // delivery URL with transformations
+  alt:        string;         // from context.alt or derived from public_id
+  tags:       string[];
+  country:    string | null;  // extracted from "country:XX" tag
+  year:       string | null;  // extracted from "year:YYYY" tag
+  set:        string | null;  // which set this belongs to
 }
 
-export interface FeaturedSet {
-  slug: string;
-  title: string;
-  subtitle: string;
-  tag: string;
+export interface PhotoSet {
+  slug:       string;
+  title:      string;
+  subtitle:   string;
   coverImage: string;
-  images: CloudinaryImage[];
+  images:     CloudinaryImage[];
 }
 
 export interface Country {
-  slug: string;
-  name: string;
-  visitedYear?: string;
+  name:       string;
   coverImage: string;
-  images: CloudinaryImage[];
+  years:      string;         // e.g. "2023–2025"
+  images:     CloudinaryImage[];
+  photoCount: number;
 }
 
-// ─── URL BUILDER ──────────────────────────────────────────────────────────────
-function buildUrl(publicId: string, width: number, quality: number): string {
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_${width},q_${quality},f_auto,e_improve:40,e_sharpen:30/${encodeURIComponent(publicId)}`;
-}
+// ── Known set metadata (title, subtitle, order) ──────────────────────────────
+// Only ADD a row here when you create a brand new set.
+// You never need to touch this for adding photos to existing sets.
 
-// ─── FETCH ALL IMAGES FROM CLOUDINARY ────────────────────────────────────────
-async function fetchAllImages(): Promise<CloudinaryImage[]> {
-  const credentials = Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64');
-  let allResources: any[] = [];
-  let nextCursor: string | null = null;
+const SET_META: Record<string, { title: string; subtitle: string; order: number }> = {
+  landscape:       { title: "Landscape",    subtitle: "Earth, sky, and the space between",           order: 1 },
+  "black-and-white":{ title: "Black & White",subtitle: "When colour steps aside, truth remains",      order: 2 },
+  lifescape:       { title: "Lifescape",    subtitle: "People, streets, and quiet human moments",    order: 3 },
+  wildlife:        { title: "Wildlife",     subtitle: "Wild eyes, wild places",                       order: 4 },
+  drone:           { title: "Drone",        subtitle: "The world seen from above",                    order: 5 },
+};
 
-  do {
-    const params = new URLSearchParams({
-      max_results: '500',
-      tags: 'true',
-      resource_type: 'image',
-    });
-    if (nextCursor) params.append('next_cursor', nextCursor);
+// Map Cloudinary tags → set slugs
+const TAG_TO_SET: Record<string, string> = {
+  blackandwhite:  "black-and-white",
+  landscape:      "landscape",
+  lifescape:      "lifescape",
+  wildlife:       "wildlife",
+  drone:          "drone",
+};
 
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/image?${params}`,
-      {
-        headers: { Authorization: `Basic ${credentials}` },
-        next: { revalidate: 3600 },
-      }
-    );
+// ── Cloudinary Search API call ────────────────────────────────────────────────
 
-    if (!res.ok) {
-      console.error('Cloudinary fetch failed:', res.status);
-      break;
+async function searchCloudinary(expression: string): Promise<any[]> {
+  const credentials = Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64");
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/resources/search`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Basic ${credentials}`,
+      },
+      body: JSON.stringify({
+        expression,
+        with_field: ["tags", "context"],
+        max_results: 500,
+        sort_by: [{ created_at: "asc" }],
+      }),
+      // Next.js: revalidate every 60 seconds (ISR)
+      // Change to { cache: "no-store" } if you want live updates
+      next: { revalidate: 60 },
     }
-
-    const data = await res.json();
-    allResources = allResources.concat(data.resources || []);
-    nextCursor = data.next_cursor || null;
-  } while (nextCursor);
-
-  return allResources.map((r: any): CloudinaryImage => ({
-    id: r.asset_id,
-    publicId: r.public_id,
-    url: buildUrl(r.public_id, 1200, 85),
-    thumbUrl: buildUrl(r.public_id, 800, 80),
-    heroUrl: buildUrl(r.public_id, 1920, 88),
-    alt: r.display_name || r.public_id,
-    tags: r.tags || [],
-    folder: r.asset_folder || '',
-  }));
-}
-
-// ─── CACHE ────────────────────────────────────────────────────────────────────
-let _cache: CloudinaryImage[] | null = null;
-
-export async function getAllImages(): Promise<CloudinaryImage[]> {
-  if (_cache) return _cache;
-  _cache = await fetchAllImages();
-  return _cache;
-}
-
-// ─── HERO CAROUSEL ────────────────────────────────────────────────────────────
-export async function getHeroImages(): Promise<CloudinaryImage[]> {
-  const images = await getAllImages();
-  return images.filter(img => img.tags.includes('hero'));
-}
-
-// ─── ABOUT PAGE PORTRAIT ──────────────────────────────────────────────────────
-export async function getAboutPortrait(): Promise<string> {
-  const images = await getAllImages();
-  const portrait = images.find(img => img.tags.includes('aboutme'));
-  if (!portrait) return '';
-  // Return special URL — fill background, crop to face, no enhance (avoids transparent bg issues)
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_800,h_1067,c_fill,g_face,b_rgb:111111,f_jpg,q_90/${encodeURIComponent(portrait.publicId)}`;
-}
-
-// ─── FEATURED SETS ────────────────────────────────────────────────────────────
-export async function getFeaturedSets(): Promise<FeaturedSet[]> {
-  const images = await getAllImages();
-
-  return SET_DEFS
-    .map(def => {
-      const setImages = images.filter(img =>
-        def.tags.some(tag => img.tags.includes(tag))
-      );
-      return {
-        slug: def.slug,
-        title: def.title,
-        subtitle: def.subtitle,
-        tag: def.slug,
-        coverImage: setImages[0]?.thumbUrl ?? '',
-        images: setImages,
-      };
-    })
-    .filter(set => set.images.length > 0);
-}
-
-export async function getSetBySlug(slug: string): Promise<FeaturedSet | null> {
-  const sets = await getFeaturedSets();
-  return sets.find(s => s.slug === slug) ?? null;
-}
-
-// ─── COUNTRIES ────────────────────────────────────────────────────────────────
-export async function getCountries(): Promise<Country[]> {
-  const images = await getAllImages();
-  const validSlugs = Object.keys(COUNTRY_META);
-
-  const results = validSlugs
-    .map(slug => {
-      const countryImages = images.filter(img => img.tags.includes(slug));
-      const meta = COUNTRY_META[slug];
-      return {
-        slug,
-        name: meta.name,
-        visitedYear: meta.visitedYear,
-        coverImage: countryImages[0]?.thumbUrl ?? '',
-        images: countryImages,
-      };
-    })
-    .filter(c => c.images.length > 0);
-
-  // Deduplicate by name (handles both Iceland and iceland)
-  const seen = new Set<string>();
-  return results
-    .filter(c => {
-      if (seen.has(c.name)) return false;
-      seen.add(c.name);
-      return true;
-    })
-    .sort((a, b) => a.name.localeCompare(b.name));
-}
-
-export async function getCountryBySlug(slug: string): Promise<Country | null> {
-  const countries = await getCountries();
-  return countries.find(c => c.slug === slug) ?? null;
-}
-
-// ─── STATS ────────────────────────────────────────────────────────────────────
-export async function getSiteStats() {
-  const images = await getAllImages();
-  const countries = await getCountries();
-  // Count only photos that have at least one category or country tag (real content)
-  const contentImages = images.filter(img =>
-    img.tags.some(tag => !['hero', 'aboutme'].includes(tag))
   );
-  return {
-    countries: countries.length,
-    photographs: contentImages.length,
-  };
+
+  if (!res.ok) {
+    console.error("Cloudinary search failed:", await res.text());
+    return [];
+  }
+
+  const data = await res.json();
+  return data.resources ?? [];
+}
+
+// ── Build a CloudinaryImage from a raw Cloudinary resource ───────────────────
+
+function buildImage(resource: any): CloudinaryImage {
+  const tags: string[]    = resource.tags ?? [];
+  const context           = resource.context?.custom ?? {};
+
+  // Extract country from "country:Nepal" style tag
+  const countryTag        = tags.find((t) => t.startsWith("country:"));
+  const country           = countryTag ? countryTag.replace("country:", "") : null;
+
+  // Extract year from "year:2024" style tag
+  const yearTag           = tags.find((t) => t.startsWith("year:"));
+  const year              = yearTag ? yearTag.replace("year:", "") : null;
+
+  // Which set does this belong to?
+  const setTag            = tags.find((t) => TAG_TO_SET[t]);
+  const set               = setTag ? TAG_TO_SET[setTag] : null;
+
+  // Alt text: prefer context.alt, fall back to display_name or public_id
+  const alt               = context.alt
+    ?? resource.display_name
+    ?? resource.public_id.split("/").pop()?.replace(/_/g, " ")
+    ?? resource.public_id;
+
+  // Build the delivery URL with standard transformations
+  const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/${resource.public_id}`;
+
+  return { publicId: resource.public_id, url, alt, tags, country, year, set };
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
+
+/**
+ * Fetch all portfolio images (any image that has at least one known set tag
+ * OR a country tag). Called once at build time by all pages.
+ */
+export async function getAllImages(): Promise<CloudinaryImage[]> {
+  const setTagList    = Object.keys(TAG_TO_SET).join(" OR tags=");
+  const expression    = `(tags=${setTagList} OR tags=country:*)`;
+  const resources     = await searchCloudinary(expression);
+  return resources.map(buildImage);
+}
+
+/**
+ * Returns all featured sets, sorted by the order defined in SET_META.
+ * Automatically includes any image tagged with the matching set tag.
+ */
+export async function getFeaturedSets(): Promise<PhotoSet[]> {
+  const allImages = await getAllImages();
+
+  const sets: PhotoSet[] = Object.entries(SET_META).map(([slug, meta]) => {
+    const images      = allImages.filter((img) => img.set === slug);
+    const coverImage  = images[0]?.url ?? "";
+    return { slug, ...meta, coverImage, images };
+  });
+
+  // Only return sets that have at least one image
+  return sets.filter((s) => s.images.length > 0).sort((a, b) => {
+    const aOrder = SET_META[a.slug]?.order ?? 99;
+    const bOrder = SET_META[b.slug]?.order ?? 99;
+    return aOrder - bOrder;
+  });
+}
+
+/**
+ * Returns a single set by slug with all its images.
+ */
+export async function getSetBySlug(slug: string): Promise<PhotoSet | null> {
+  const sets = await getFeaturedSets();
+  return sets.find((s) => s.slug === slug) ?? null;
+}
+
+/**
+ * Returns all countries that appear in Cloudinary tags.
+ * A new country appears AUTOMATICALLY when you tag a photo with country:XX.
+ */
+export async function getAllCountries(): Promise<Country[]> {
+  const allImages = await getAllImages();
+
+  // Group by country
+  const countryMap: Record<string, CloudinaryImage[]> = {};
+  for (const img of allImages) {
+    if (!img.country) continue;
+    if (!countryMap[img.country]) countryMap[img.country] = [];
+    countryMap[img.country].push(img);
+  }
+
+  return Object.entries(countryMap).map(([name, images]) => {
+    const years   = images.map((i) => i.year).filter(Boolean) as string[];
+    const minYear = years.length ? Math.min(...years.map(Number)).toString() : "";
+    const maxYear = years.length ? Math.max(...years.map(Number)).toString() : "";
+    const yearRange = minYear === maxYear ? minYear : `${minYear}–${maxYear}`;
+
+    return {
+      name,
+      coverImage:  images[0].url,
+      years:       yearRange,
+      images,
+      photoCount:  images.length,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/**
+ * Returns a single country by name with all its images.
+ */
+export async function getCountryByName(name: string): Promise<Country | null> {
+  const countries = await getAllCountries();
+  return countries.find(
+    (c) => c.name.toLowerCase() === name.toLowerCase()
+  ) ?? null;
+}
+
+/**
+ * Returns all valid set slugs — used by Next.js generateStaticParams.
+ */
+export async function getAllSetSlugs(): Promise<string[]> {
+  const sets = await getFeaturedSets();
+  return sets.map((s) => s.slug);
+}
+
+/**
+ * Returns all valid country names — used by Next.js generateStaticParams.
+ */
+export async function getAllCountryNames(): Promise<string[]> {
+  const countries = await getAllCountries();
+  return countries.map((c) => c.name);
 }

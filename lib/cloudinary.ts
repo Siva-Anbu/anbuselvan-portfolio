@@ -19,8 +19,10 @@ const API_SECRET = process.env.CLOUDINARY_API_SECRET!;
 // ── Core image type ───────────────────────────────────────────────────────────
 
 export interface CloudinaryImage {
+  id:       string;        // same as publicId — used by existing components
   publicId: string;
-  url:      string;
+  url:      string;        // full quality delivery URL
+  thumbUrl: string;        // thumbnail URL (w_200) — used by FeaturedSetsSection
   alt:      string;
   tags:     string[];
   country:  string | null;
@@ -28,11 +30,11 @@ export interface CloudinaryImage {
   set:      string | null;
 }
 
-// Alias — some existing components may import this name
+// Type aliases — existing components may import these names
 export type PortfolioImage = CloudinaryImage;
 export type Photo          = CloudinaryImage;
 
-// ── Set type ─────────────────────────────────────────────────────────────────
+// ── Set type ──────────────────────────────────────────────────────────────────
 
 export interface FeaturedSet {
   slug:       string;
@@ -42,7 +44,7 @@ export interface FeaturedSet {
   images:     CloudinaryImage[];
 }
 
-// Alias — keep both names working
+// Alias
 export type PhotoSet = FeaturedSet;
 
 // ── Country type ──────────────────────────────────────────────────────────────
@@ -131,12 +133,20 @@ function buildImage(resource: any): CloudinaryImage {
     ?? resource.public_id.split("/").pop()?.replace(/_/g, " ")
     ?? resource.public_id;
 
-  const url = buildUrl(
-    resource.public_id,
-    "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30"
-  );
+  const url      = buildUrl(resource.public_id, "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30");
+  const thumbUrl = buildUrl(resource.public_id, "w_200,q_70,f_auto");
 
-  return { publicId: resource.public_id, url, alt, tags, country, year, set };
+  return {
+    id:       resource.public_id,
+    publicId: resource.public_id,
+    url,
+    thumbUrl,
+    alt,
+    tags,
+    country,
+    year,
+    set,
+  };
 }
 
 function buildCountry(name: string, images: CloudinaryImage[]): Country {
@@ -170,15 +180,21 @@ export async function getAllImages(): Promise<CloudinaryImage[]> {
 /** Tag photos with "hero" → shows in homepage carousel */
 export async function getHeroImages(): Promise<CloudinaryImage[]> {
   const resources = await searchCloudinary("tags=hero");
-  return resources.map((r) => ({
-    publicId: r.public_id,
-    url:      buildUrl(r.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30"),
-    alt:      r.context?.custom?.alt ?? r.display_name ?? r.public_id,
-    tags:     r.tags ?? [],
-    country:  null,
-    year:     null,
-    set:      null,
-  }));
+  return resources.map((r) => {
+    const url      = buildUrl(r.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30");
+    const thumbUrl = buildUrl(r.public_id, "w_200,q_70,f_auto");
+    return {
+      id:       r.public_id,
+      publicId: r.public_id,
+      url,
+      thumbUrl,
+      alt:     r.context?.custom?.alt ?? r.display_name ?? r.public_id,
+      tags:    r.tags ?? [],
+      country: null,
+      year:    null,
+      set:     null,
+    };
+  });
 }
 
 /** Tag portrait photo with "portrait" → shows on About page */

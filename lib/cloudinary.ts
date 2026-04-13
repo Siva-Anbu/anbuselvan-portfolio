@@ -1,22 +1,22 @@
 // lib/cloudinary.ts
 // ─────────────────────────────────────────────────────────────────────────────
-// Single source of truth — all data comes from Cloudinary at build time.
-// Add a photo → tag it → it appears automatically. No portfolio.ts edits needed.
+// All data comes from Cloudinary at build time via tags.
+// Upload → tag → appears automatically. No portfolio.ts edits ever needed.
 //
 // TAGGING CONVENTION:
 //   Set tags  : blackandwhite | landscape | lifescape | wildlife | drone
-//   Hero      : hero                (shows in homepage carousel)
-//   Portrait  : portrait            (shows on about page)
+//   Hero      : hero                (homepage carousel)
+//   Portrait  : portrait            (about page)
 //   Country   : country:Nepal       (auto-creates country page)
-//   Year      : year:2024           (used for year range on country page)
-//   Caption   : context field alt=  (caption shown under photo)
+//   Year      : year:2024           (year range on country page)
+//   Caption   : context field alt=  (caption under photo)
 // ─────────────────────────────────────────────────────────────────────────────
 
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
 const API_KEY    = process.env.CLOUDINARY_API_KEY!;
 const API_SECRET = process.env.CLOUDINARY_API_SECRET!;
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Core image type ───────────────────────────────────────────────────────────
 
 export interface CloudinaryImage {
   publicId: string;
@@ -28,7 +28,13 @@ export interface CloudinaryImage {
   set:      string | null;
 }
 
-export interface PhotoSet {
+// Alias — some existing components may import this name
+export type PortfolioImage = CloudinaryImage;
+export type Photo          = CloudinaryImage;
+
+// ── Set type ─────────────────────────────────────────────────────────────────
+
+export interface FeaturedSet {
   slug:       string;
   title:      string;
   subtitle:   string;
@@ -36,19 +42,22 @@ export interface PhotoSet {
   images:     CloudinaryImage[];
 }
 
-// Country type — flat (no cities). visitedYear is an alias of years for
-// backwards compatibility with any existing component that references it.
+// Alias — keep both names working
+export type PhotoSet = FeaturedSet;
+
+// ── Country type ──────────────────────────────────────────────────────────────
+
 export interface Country {
   name:        string;
   slug:        string;
   coverImage:  string;
   years:       string;
-  visitedYear: string;
+  visitedYear: string;   // alias of years — backwards compat
   images:      CloudinaryImage[];
   photoCount:  number;
 }
 
-// ── Set metadata ─────────────────────────────────────────────────────────────
+// ── Set metadata ──────────────────────────────────────────────────────────────
 
 const SET_META: Record<string, { title: string; subtitle: string; order: number }> = {
   landscape:         { title: "Landscape",     subtitle: "Earth, sky, and the space between",        order: 1 },
@@ -66,7 +75,7 @@ const TAG_TO_SET: Record<string, string> = {
   drone:         "drone",
 };
 
-// ── Core Cloudinary Search API ────────────────────────────────────────────────
+// ── Cloudinary Search API ─────────────────────────────────────────────────────
 
 async function searchCloudinary(expression: string): Promise<any[]> {
   const credentials = Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64");
@@ -158,7 +167,7 @@ export async function getAllImages(): Promise<CloudinaryImage[]> {
   return resources.map(buildImage);
 }
 
-/** Tag photos with "hero" to show in the homepage carousel */
+/** Tag photos with "hero" → shows in homepage carousel */
 export async function getHeroImages(): Promise<CloudinaryImage[]> {
   const resources = await searchCloudinary("tags=hero");
   return resources.map((r) => ({
@@ -172,14 +181,14 @@ export async function getHeroImages(): Promise<CloudinaryImage[]> {
   }));
 }
 
-/** Tag your portrait photo with "portrait" — used on the About page */
+/** Tag portrait photo with "portrait" → shows on About page */
 export async function getAboutPortrait(): Promise<string | null> {
   const resources = await searchCloudinary("tags=portrait");
   if (!resources.length) return null;
   return buildUrl(resources[0].public_id, "w_800,q_90,f_auto");
 }
 
-/** Photo + country counts for the homepage stats section */
+/** Photo + country counts for homepage stats */
 export async function getSiteStats(): Promise<{ countries: number; photographs: number }> {
   const allImages  = await getAllImages();
   const countrySet = new Set(allImages.map((img) => img.country).filter(Boolean));
@@ -212,9 +221,7 @@ export async function getCountries(): Promise<Country[]> {
 
 export async function getCountryByName(name: string): Promise<Country | null> {
   const countries = await getAllCountries();
-  return (
-    countries.find((c) => c.name.toLowerCase() === name.toLowerCase()) ?? null
-  );
+  return countries.find((c) => c.name.toLowerCase() === name.toLowerCase()) ?? null;
 }
 
 export async function getAllCountryNames(): Promise<string[]> {
@@ -222,11 +229,11 @@ export async function getAllCountryNames(): Promise<string[]> {
   return countries.map((c) => c.name);
 }
 
-/** All featured sets — sorted by order in SET_META */
-export async function getFeaturedSets(): Promise<PhotoSet[]> {
+/** All featured sets sorted by order */
+export async function getFeaturedSets(): Promise<FeaturedSet[]> {
   const allImages = await getAllImages();
 
-  const sets: PhotoSet[] = Object.entries(SET_META).map(([slug, meta]) => {
+  const sets: FeaturedSet[] = Object.entries(SET_META).map(([slug, meta]) => {
     const images     = allImages.filter((img) => img.set === slug);
     const coverImage = images[0]?.url ?? "";
     return { slug, ...meta, coverImage, images };
@@ -240,7 +247,7 @@ export async function getFeaturedSets(): Promise<PhotoSet[]> {
     );
 }
 
-export async function getSetBySlug(slug: string): Promise<PhotoSet | null> {
+export async function getSetBySlug(slug: string): Promise<FeaturedSet | null> {
   const sets = await getFeaturedSets();
   return sets.find((s) => s.slug === slug) ?? null;
 }

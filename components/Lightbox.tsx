@@ -1,62 +1,113 @@
-const content = (
-  <>
-    <div
-      onClick={onClose}
-      onContextMenu={(e) => e.preventDefault()}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 2147483646,
-        backgroundColor: 'rgba(0,0,0,0.96)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      {/* Image Wrapper */}
+'use client';
+
+import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
+
+export interface GalleryImage {
+  id: string;
+  url: string;
+  alt: string;
+}
+
+export default function Lightbox({
+  images,
+  index,
+  onClose,
+  onPrev,
+  onNext,
+}: {
+  images: GalleryImage[];
+  index: number;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const img = images[index];
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft') onPrev();
+      if (e.key === 'ArrowRight') onNext();
+    };
+
+    window.addEventListener('keydown', handler);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handler);
+      document.body.style.overflow = '';
+    };
+  }, [onClose, onPrev, onNext]);
+
+  const btn: React.CSSProperties = {
+    position: 'fixed',
+    zIndex: 2147483647,
+    width: '44px',
+    height: '44px',
+    borderRadius: '50%',
+    background: 'rgba(0,0,0,0.7)',
+    border: '1px solid rgba(255,255,255,0.3)',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    fontSize: '18px',
+  };
+
+  const content = (
+    <>
+      {/* BACKDROP */}
       <div
-        onClick={(e) => e.stopPropagation()}
+        onClick={onClose}
+        onContextMenu={(e) => e.preventDefault()}
         style={{
-          width: '100vw',
-          height: '100vh',
-          padding: '60px',
-          boxSizing: 'border-box',
+          position: 'fixed',
+          inset: 0,
+          zIndex: 2147483646,
+          backgroundColor: 'rgba(0,0,0,0.96)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          position: 'relative',
         }}
       >
-        <img
-          key={img.url}
-          src={img.url}
-          alt={img.alt}
-          draggable={false}
-          onContextMenu={(e) => e.preventDefault()}
-          style={{
-            maxWidth: '100%',
-            maxHeight: '100%',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'contain',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            msUserSelect: 'none',
-          }}
-        />
-
+        {/* IMAGE WRAPPER */}
         <div
-          onContextMenu={(e) => e.preventDefault()}
+          onClick={(e) => e.stopPropagation()}
           style={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 2,
+            width: '100vw',
+            height: '100vh',
+            padding: '60px',
+            boxSizing: 'border-box',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
           }}
-        />
+        >
+          <img
+            key={img.url}
+            src={img.url}
+            alt={img.alt}
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            style={{
+              maxWidth: '100%',
+              maxHeight: '100%',
+              width: 'auto',
+              height: 'auto',
+              objectFit: 'contain',
+              userSelect: 'none',
+              WebkitUserSelect: 'none',
+              MozUserSelect: 'none',
+              msUserSelect: 'none',
+            }}
+          />
+        </div>
       </div>
 
-      {/* Close */}
+      {/* CLOSE BUTTON */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -67,7 +118,7 @@ const content = (
         ✕
       </button>
 
-      {/* Prev */}
+      {/* PREV */}
       {images.length > 1 && (
         <button
           onClick={(e) => {
@@ -85,7 +136,7 @@ const content = (
         </button>
       )}
 
-      {/* Next */}
+      {/* NEXT */}
       {images.length > 1 && (
         <button
           onClick={(e) => {
@@ -103,7 +154,7 @@ const content = (
         </button>
       )}
 
-      {/* Counter */}
+      {/* COUNTER */}
       <div
         style={{
           position: 'fixed',
@@ -120,21 +171,23 @@ const content = (
         {String(index + 1).padStart(2, '0')} /{' '}
         {String(images.length).padStart(2, '0')}
       </div>
-    </div>
 
-    {/* Copyright overlay */}
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '10px',
-        right: '16px',
-        fontSize: '10px',
-        color: 'rgba(255,255,255,0.4)',
-        zIndex: 2147483647,
-        pointerEvents: 'none',
-      }}
-    >
-      © Anbuselvan Sivaraju
-    </div>
-  </>
-);
+      {/* COPYRIGHT */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '10px',
+          right: '16px',
+          fontSize: '10px',
+          color: 'rgba(255,255,255,0.4)',
+          zIndex: 2147483647,
+          pointerEvents: 'none',
+        }}
+      >
+        © Anbuselvan Sivaraju
+      </div>
+    </>
+  );
+
+  return createPortal(content, document.body);
+}

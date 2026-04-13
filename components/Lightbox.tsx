@@ -269,10 +269,18 @@ export default function SetGallery({
       {mounted && activeIndex !== null && (
         <Lightbox
           images={images}
-          index={activeIndex}
-          onClose={close}
-          onPrev={prev}
-          onNext={next}
+          index={lightboxIndex ?? 0}
+          onClose={() => setLightboxIndex(null)}
+          onPrev={() =>
+            setLightboxIndex((i) =>
+              i === null ? 0 : (i - 1 + images.length) % images.length
+            )
+          }
+          onNext={() =>
+            setLightboxIndex((i) =>
+              i === null ? 0 : (i + 1) % images.length
+            )
+          }
         />
       )}
     </>

@@ -47,10 +47,10 @@ export default function ContactPage() {
                   Email
                 </p>
                 <a
-                  href="mailto:hello@anbuselvan.com"
+                  href="mailto:s.anbuselvan@gmail.com"
                   className="font-body text-[13px] text-white/50 hover:text-white transition-colors"
                 >
-                  hello@anbuselvan.com
+                  s.anbuselvan@gmail.com
                 </a>
               </div>
               <div>
@@ -58,7 +58,7 @@ export default function ContactPage() {
                   Based In
                 </p>
                 <p className="font-body text-[13px] text-white/50">
-                  Coimbatore, Tamil Nadu, India
+                  Copenhagen, Denmark
                 </p>
               </div>
               <div>

@@ -1,4 +1,16 @@
 // lib/cloudinary.ts
+// ─────────────────────────────────────────────────────────────────────────────
+// Single source of truth — all data comes from Cloudinary at build time.
+// Add a photo → tag it → it appears automatically. No portfolio.ts edits needed.
+//
+// TAGGING CONVENTION:
+//   Set tags  : blackandwhite | landscape | lifescape | wildlife | drone
+//   Hero      : hero                (shows in homepage carousel)
+//   Portrait  : portrait            (shows on about page)
+//   Country   : country:Nepal       (auto-creates country page)
+//   Year      : year:2024           (used for year range on country page)
+//   Caption   : context field alt=  (caption shown under photo)
+// ─────────────────────────────────────────────────────────────────────────────
 
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
 const API_KEY    = process.env.CLOUDINARY_API_KEY!;
@@ -7,13 +19,13 @@ const API_SECRET = process.env.CLOUDINARY_API_SECRET!;
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export interface CloudinaryImage {
-  publicId:   string;
-  url:        string;
-  alt:        string;
-  tags:       string[];
-  country:    string | null;
-  year:       string | null;
-  set:        string | null;
+  publicId: string;
+  url:      string;
+  alt:      string;
+  tags:     string[];
+  country:  string | null;
+  year:     string | null;
+  set:      string | null;
 }
 
 export interface PhotoSet {
@@ -24,22 +36,26 @@ export interface PhotoSet {
   images:     CloudinaryImage[];
 }
 
+// Country type — flat (no cities). visitedYear is an alias of years for
+// backwards compatibility with any existing component that references it.
 export interface Country {
-  name:       string;
-  coverImage: string;
-  years:      string;
-  images:     CloudinaryImage[];
-  photoCount: number;
+  name:        string;
+  slug:        string;
+  coverImage:  string;
+  years:       string;
+  visitedYear: string;
+  images:      CloudinaryImage[];
+  photoCount:  number;
 }
 
 // ── Set metadata ─────────────────────────────────────────────────────────────
 
 const SET_META: Record<string, { title: string; subtitle: string; order: number }> = {
-  landscape:          { title: "Landscape",     subtitle: "Earth, sky, and the space between",         order: 1 },
-  "black-and-white":  { title: "Black & White", subtitle: "When colour steps aside, truth remains",    order: 2 },
-  lifescape:          { title: "Lifescape",     subtitle: "People, streets, and quiet human moments",  order: 3 },
-  wildlife:           { title: "Wildlife",      subtitle: "Wild eyes, wild places",                    order: 4 },
-  drone:              { title: "Drone",         subtitle: "The world seen from above",                 order: 5 },
+  landscape:         { title: "Landscape",     subtitle: "Earth, sky, and the space between",        order: 1 },
+  "black-and-white": { title: "Black & White", subtitle: "When colour steps aside, truth remains",   order: 2 },
+  lifescape:         { title: "Lifescape",     subtitle: "People, streets, and quiet human moments", order: 3 },
+  wildlife:          { title: "Wildlife",      subtitle: "Wild eyes, wild places",                   order: 4 },
+  drone:             { title: "Drone",         subtitle: "The world seen from above",                order: 5 },
 };
 
 const TAG_TO_SET: Record<string, string> = {
@@ -50,7 +66,7 @@ const TAG_TO_SET: Record<string, string> = {
   drone:         "drone",
 };
 
-// ── Core Cloudinary Search API ───────────────────────────────────────────────
+// ── Core Cloudinary Search API ────────────────────────────────────────────────
 
 async function searchCloudinary(expression: string): Promise<any[]> {
   const credentials = Buffer.from(`${API_KEY}:${API_SECRET}`).toString("base64");
@@ -82,7 +98,11 @@ async function searchCloudinary(expression: string): Promise<any[]> {
   return data.resources ?? [];
 }
 
-// ── Build image object ───────────────────────────────────────────────────────
+// ── Build helpers ─────────────────────────────────────────────────────────────
+
+function buildUrl(publicId: string, transformation: string): string {
+  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${transformation}/${publicId}`;
+}
 
 function buildImage(resource: any): CloudinaryImage {
   const tags: string[] = resource.tags ?? [];
@@ -102,94 +122,99 @@ function buildImage(resource: any): CloudinaryImage {
     ?? resource.public_id.split("/").pop()?.replace(/_/g, " ")
     ?? resource.public_id;
 
-  const url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/${resource.public_id}`;
+  const url = buildUrl(
+    resource.public_id,
+    "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30"
+  );
 
   return { publicId: resource.public_id, url, alt, tags, country, year, set };
 }
 
-function buildUrl(publicId: string, transformation: string): string {
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${transformation}/${publicId}`;
+function buildCountry(name: string, images: CloudinaryImage[]): Country {
+  const years     = images.map((i) => i.year).filter(Boolean) as string[];
+  const minYear   = years.length ? Math.min(...years.map(Number)).toString() : "";
+  const maxYear   = years.length ? Math.max(...years.map(Number)).toString() : "";
+  const yearRange = minYear === maxYear ? minYear : `${minYear}–${maxYear}`;
+
+  return {
+    name,
+    slug:        name,
+    coverImage:  images[0].url,
+    years:       yearRange,
+    visitedYear: yearRange,
+    images,
+    photoCount:  images.length,
+  };
 }
 
-// ── All images ───────────────────────────────────────────────────────────────
+// ── Public API ────────────────────────────────────────────────────────────────
 
+/** All portfolio images (has a set tag OR a country tag) */
 export async function getAllImages(): Promise<CloudinaryImage[]> {
   const setTagList = Object.keys(TAG_TO_SET).join(" OR tags=");
-  const resources  = await searchCloudinary(`(tags=${setTagList} OR tags=country:*)`);
+  const resources  = await searchCloudinary(
+    `(tags=${setTagList} OR tags=country:*)`
+  );
   return resources.map(buildImage);
 }
 
-// ── HERO IMAGES (used by app/page.tsx) ───────────────────────────────────────
-// Tag any photo with "hero" in Cloudinary to show it in the homepage carousel
-
-export async function getHeroImages(): Promise<{ publicId: string; url: string; alt: string }[]> {
+/** Tag photos with "hero" to show in the homepage carousel */
+export async function getHeroImages(): Promise<CloudinaryImage[]> {
   const resources = await searchCloudinary("tags=hero");
   return resources.map((r) => ({
     publicId: r.public_id,
     url:      buildUrl(r.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30"),
     alt:      r.context?.custom?.alt ?? r.display_name ?? r.public_id,
+    tags:     r.tags ?? [],
+    country:  null,
+    year:     null,
+    set:      null,
   }));
 }
 
-// ── ABOUT PORTRAIT (used by app/about/page.tsx) ───────────────────────────────
-// Tag your portrait photo with "portrait" in Cloudinary
-
+/** Tag your portrait photo with "portrait" — used on the About page */
 export async function getAboutPortrait(): Promise<string | null> {
   const resources = await searchCloudinary("tags=portrait");
   if (!resources.length) return null;
   return buildUrl(resources[0].public_id, "w_800,q_90,f_auto");
 }
 
-// ── SITE STATS (used by app/page.tsx) ────────────────────────────────────────
-
+/** Photo + country counts for the homepage stats section */
 export async function getSiteStats(): Promise<{ countries: number; photographs: number }> {
-  const allImages = await getAllImages();
-  const countrySet = new Set(
-    allImages.map((img) => img.country).filter(Boolean)
-  );
+  const allImages  = await getAllImages();
+  const countrySet = new Set(allImages.map((img) => img.country).filter(Boolean));
   return {
-    countries:    countrySet.size,
-    photographs:  allImages.length,
+    countries:   countrySet.size,
+    photographs: allImages.length,
   };
 }
 
-// ── COUNTRIES (used by app/page.tsx homepage + countries pages) ───────────────
-
-export async function getCountries(): Promise<Country[]> {
-  return getAllCountries();
-}
-
+/** All countries — auto-generated from "country:XX" tags */
 export async function getAllCountries(): Promise<Country[]> {
-  const allImages = await getAllImages();
-
+  const allImages   = await getAllImages();
   const countryMap: Record<string, CloudinaryImage[]> = {};
+
   for (const img of allImages) {
     if (!img.country) continue;
     if (!countryMap[img.country]) countryMap[img.country] = [];
     countryMap[img.country].push(img);
   }
 
-  return Object.entries(countryMap).map(([name, images]) => {
-    const years    = images.map((i) => i.year).filter(Boolean) as string[];
-    const minYear  = years.length ? Math.min(...years.map(Number)).toString() : "";
-    const maxYear  = years.length ? Math.max(...years.map(Number)).toString() : "";
-    const yearRange = minYear === maxYear ? minYear : `${minYear}–${maxYear}`;
+  return Object.entries(countryMap)
+    .map(([name, images]) => buildCountry(name, images))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
 
-    return {
-      name,
-      coverImage: images[0].url,
-      years:      yearRange,
-      images,
-      photoCount: images.length,
-    };
-  }).sort((a, b) => a.name.localeCompare(b.name));
+/** Alias used by app/page.tsx */
+export async function getCountries(): Promise<Country[]> {
+  return getAllCountries();
 }
 
 export async function getCountryByName(name: string): Promise<Country | null> {
   const countries = await getAllCountries();
-  return countries.find(
-    (c) => c.name.toLowerCase() === name.toLowerCase()
-  ) ?? null;
+  return (
+    countries.find((c) => c.name.toLowerCase() === name.toLowerCase()) ?? null
+  );
 }
 
 export async function getAllCountryNames(): Promise<string[]> {
@@ -197,8 +222,7 @@ export async function getAllCountryNames(): Promise<string[]> {
   return countries.map((c) => c.name);
 }
 
-// ── SETS ─────────────────────────────────────────────────────────────────────
-
+/** All featured sets — sorted by order in SET_META */
 export async function getFeaturedSets(): Promise<PhotoSet[]> {
   const allImages = await getAllImages();
 
@@ -210,7 +234,10 @@ export async function getFeaturedSets(): Promise<PhotoSet[]> {
 
   return sets
     .filter((s) => s.images.length > 0)
-    .sort((a, b) => (SET_META[a.slug]?.order ?? 99) - (SET_META[b.slug]?.order ?? 99));
+    .sort(
+      (a, b) =>
+        (SET_META[a.slug]?.order ?? 99) - (SET_META[b.slug]?.order ?? 99)
+    );
 }
 
 export async function getSetBySlug(slug: string): Promise<PhotoSet | null> {

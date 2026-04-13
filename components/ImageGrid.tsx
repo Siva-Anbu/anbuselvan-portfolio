@@ -52,14 +52,20 @@ export default function ImageGrid({ images, columns = 3 }: ImageGridProps) {
           </button>
         ))}
       </div>
-
       {lightboxIndex !== null && (
         <Lightbox
           images={images}
-          initialIndex={lightboxIndex}
+          index={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
+          onPrev={() =>
+            setLightboxIndex((i) =>
+              i === null ? 0 : (i - 1 + images.length) % images.length
+            )
+          }
+          onNext={() =>
+            setLightboxIndex((i) =>
+              i === null ? 0 : (i + 1) % images.length
+            )
+          }
         />
       )}
-    </>
-  );
-}

@@ -17,7 +17,7 @@ export default function Footer() {
               Sivaraju
             </p>
             <p className="font-body text-[12px] text-white/30 leading-relaxed max-w-xs">
-              Photographer documenting light, texture, and quiet moments across the world.
+              Photographer documenting the world through his viewfinder, where people, travel, architecture, and still life reveal their silent poetry.
             </p>
           </div>
 

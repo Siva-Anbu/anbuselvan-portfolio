@@ -11,19 +11,19 @@ const services = [
     id: '01',
     title: 'Maternity Photography',
     description: 'Soft, natural light. Calm, unhurried sessions. Maternity is one of the most intimate transitions in life. I aim to photograph it with the quiet reverence it deserves.',
-    details: ['Indoor or outdoor sessions', '2-3 hours', 'Edited gallery of 40-60 images'],
+    details: ['Indoor or outdoor sessions', '2-3 hours', 'Edited gallery of 25-40 images'],
   },
   {
     id: '02',
     title: 'Couple Shoots',
     description: 'Whether it is an anniversary, a pre-wedding session, or simply wanting beautiful photographs together. I create space for natural moments rather than forced poses.',
-    details: ['Golden hour preferred', '1.5-2 hours', 'Edited gallery of 30-50 images'],
+    details: ['Golden hour preferred', '1.5-2 hours', 'Edited gallery of 30-40 images'],
   },
   {
     id: '03',
     title: 'Birthday Celebrations',
     description: 'Candid, joyful, and atmospheric. I document the energy of birthdays. The small moments between the big ones make for the most memorable photographs.',
-    details: ['Event coverage', '2-4 hours', 'Edited gallery of 60-100 images'],
+    details: ['Event coverage', '2-4 hours', 'Edited gallery of 50-70 images'],
   },
   {
     id: '04',
@@ -88,10 +88,10 @@ export default function WorkWithMePage() {
         <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/25 mb-10">How It Works</p>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {[
-            { step: '01', title: 'Reach Out',  desc: 'Drop me a message with the occasion, date, and what you have in mind.' },
-            { step: '02', title: 'We Talk',    desc: 'A short conversation to understand your vision and make sure we are a good fit.' },
-            { step: '03', title: 'We Shoot',   desc: 'I show up, observe, and capture. Unhurried, natural, genuine.' },
-            { step: '04', title: 'You Receive',desc: 'A curated, edited gallery delivered within 7-10 days. Yours to keep.' },
+            { step: '01', title: 'Reach Out', desc: 'Drop me a message with the occasion, date, and what you have in mind.' },
+            { step: '02', title: 'We Talk', desc: 'A short conversation to understand your vision and make sure we are a good fit.' },
+            { step: '03', title: 'We Shoot', desc: 'I show up, observe, and capture. Unhurried, natural, genuine.' },
+            { step: '04', title: 'You Receive', desc: 'A curated, edited gallery delivered within 7-10 days. Yours to keep.' },
           ].map(({ step, title, desc }) => (
             <div key={step}>
               <span className="font-mono text-[10px] tracking-[0.3em] block mb-3" style={{ color: 'var(--accent)' }}>{step}</span>

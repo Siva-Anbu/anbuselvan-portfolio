@@ -72,12 +72,13 @@ export default function ContactPage() {
             </div>
 
             {/* Divider */}
+            {/*
             <div className="mt-10 pt-10 border-t border-white/5">
               <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 mb-4">
                 Follow
               </p>
               <div className="flex gap-4">
-                {['Instagram', 'Behance', 'LinkedIn'].map((platform) => (
+                {['Instagram', 'LinkedIn'].map((platform) => (
                   <a
                     key={platform}
                     href="#"
@@ -87,7 +88,7 @@ export default function ContactPage() {
                   </a>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right: form */}

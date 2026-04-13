@@ -134,14 +134,10 @@ export async function getHeroImages(): Promise<{ publicId: string; url: string; 
 // ── ABOUT PORTRAIT (used by app/about/page.tsx) ───────────────────────────────
 // Tag your portrait photo with "portrait" in Cloudinary
 
-export async function getAboutPortrait(): Promise<{ url: string; alt: string } | null> {
+export async function getAboutPortrait(): Promise<string | null> {
   const resources = await searchCloudinary("tags=portrait");
   if (!resources.length) return null;
-  const r = resources[0];
-  return {
-    url: buildUrl(r.public_id, "w_800,q_90,f_auto"),
-    alt: r.context?.custom?.alt ?? "Anbuselvan Sivaraju",
-  };
+  return buildUrl(resources[0].public_id, "w_800,q_90,f_auto");
 }
 
 // ── SITE STATS (used by app/page.tsx) ────────────────────────────────────────

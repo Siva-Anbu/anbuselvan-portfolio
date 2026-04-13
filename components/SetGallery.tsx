@@ -72,14 +72,15 @@ function Lightbox({
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
-          maxWidth: '90vw',
-          maxHeight: '90vh',
+          width: '100vw',
+          height: '100vh',
+          padding: '60px', // gives breathing space
+          boxSizing: 'border-box',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           key={img.url}
           src={img.url}
@@ -90,7 +91,6 @@ function Lightbox({
             width: 'auto',
             height: 'auto',
             objectFit: 'contain',
-            transition: 'transform 0.3s ease',
           }}
         />
       </div>

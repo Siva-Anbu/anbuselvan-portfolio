@@ -1,62 +1,5 @@
-'use client';
-
-import { useEffect } from 'react';
-import { createPortal } from 'react-dom';
-
-export interface GalleryImage {
-  id: string;
-  url: string;
-  alt: string;
-}
-
-export default function Lightbox({
-  images,
-  index,
-  onClose,
-  onPrev,
-  onNext,
-}: {
-  images: GalleryImage[];
-  index: number;
-  onClose: () => void;
-  onPrev: () => void;
-  onNext: () => void;
-}) {
-  const img = images[index];
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowLeft') onPrev();
-      if (e.key === 'ArrowRight') onNext();
-    };
-
-    window.addEventListener('keydown', handler);
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      window.removeEventListener('keydown', handler);
-      document.body.style.overflow = '';
-    };
-  }, [onClose, onPrev, onNext]);
-
-  const btn: React.CSSProperties = {
-    position: 'fixed',
-    zIndex: 2147483647,
-    width: '44px',
-    height: '44px',
-    borderRadius: '50%',
-    background: 'rgba(0,0,0,0.7)',
-    border: '1px solid rgba(255,255,255,0.3)',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white',
-    fontSize: '18px',
-  };
-
-  const content = (
+const content = (
+  <>
     <div
       onClick={onClose}
       onContextMenu={(e) => e.preventDefault()}
@@ -103,7 +46,6 @@ export default function Lightbox({
           }}
         />
 
-        {/* Transparent overlay */}
         <div
           onContextMenu={(e) => e.preventDefault()}
           style={{
@@ -179,7 +121,20 @@ export default function Lightbox({
         {String(images.length).padStart(2, '0')}
       </div>
     </div>
-  );
 
-  return createPortal(content, document.body);
-}
+    {/* Copyright overlay */}
+    <div
+      style={{
+        position: 'fixed',
+        bottom: '10px',
+        right: '16px',
+        fontSize: '10px',
+        color: 'rgba(255,255,255,0.4)',
+        zIndex: 2147483647,
+        pointerEvents: 'none',
+      }}
+    >
+      © Anbuselvan Sivaraju
+    </div>
+  </>
+);

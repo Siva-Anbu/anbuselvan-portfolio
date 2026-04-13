@@ -52,6 +52,8 @@ export default function Lightbox({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    color: 'white',
+    fontSize: '18px',
   };
 
   const content = (
@@ -95,7 +97,9 @@ export default function Lightbox({
             height: 'auto',
             objectFit: 'contain',
             userSelect: 'none',
-            WebkitUserDrag: 'none',
+            WebkitUserSelect: 'none',
+            MozUserSelect: 'none',
+            msUserSelect: 'none',
           }}
         />
 

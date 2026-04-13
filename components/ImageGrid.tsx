@@ -52,6 +52,7 @@ export default function ImageGrid({ images, columns = 3 }: ImageGridProps) {
           </button>
         ))}
       </div>
+
       {lightboxIndex !== null && (
         <Lightbox
           images={images}
@@ -69,3 +70,6 @@ export default function ImageGrid({ images, columns = 3 }: ImageGridProps) {
           }
         />
       )}
+    </>
+  );
+}

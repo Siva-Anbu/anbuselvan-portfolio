@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCountryByName, getAllCountryNames } from "@/lib/cloudinary";
-import ImageGrid from "@/components/ImageGrid";
+import SetGallery from "@/components/SetGallery";
 import Footer from "@/components/Footer";
 
 export const revalidate = 60;
@@ -24,7 +24,6 @@ export default async function CountryPage({ params }: { params: { country: strin
   const country = await getCountryByName(params.country);
   if (!country) notFound();
 
-  // ImageGrid expects { id, url, alt }
   const gridImages = country.images.map((img) => ({
     id:  img.id,
     url: img.url,
@@ -38,7 +37,7 @@ export default async function CountryPage({ params }: { params: { country: strin
         <Image src={country.coverImage} alt={country.name} fill
           className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full px-6 md:px-12 max-w-[1600px] mx-auto pb-12">
+        <div className="absolute bottom-0 left-0 w-full px-6 md:px-12 max-w-[1600px] mx-auto pb-10">
           <Link href="/countries"
             className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors mb-6 inline-flex items-center gap-2">
             ← All Countries
@@ -53,9 +52,9 @@ export default async function CountryPage({ params }: { params: { country: strin
         </div>
       </div>
 
-      {/* Image grid with lightbox */}
+      {/* Gallery with lightbox */}
       <div className="px-6 md:px-12 max-w-[1600px] mx-auto py-12">
-        <ImageGrid images={gridImages} columns={3} />
+        <SetGallery images={gridImages} />
       </div>
 
       <Footer />

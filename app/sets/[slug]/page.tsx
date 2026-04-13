@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getSetBySlug, getAllSetSlugs, getFeaturedSets } from "@/lib/cloudinary";
-import ImageGrid from "@/components/ImageGrid";
+import SetGallery from "@/components/SetGallery";
 import Footer from "@/components/Footer";
 
 export const revalidate = 60;
@@ -31,7 +31,6 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
   const prevSet = idx > 0 ? allSets[idx - 1] : null;
   const nextSet = idx < allSets.length - 1 ? allSets[idx + 1] : null;
 
-  // ImageGrid expects { id, url, alt }
   const gridImages = set.images.map((img) => ({
     id:  img.id,
     url: img.url,
@@ -41,13 +40,13 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
   return (
     <main className="min-h-screen bg-[#0a0a0a]">
       {/* Hero banner */}
-      <div className="relative h-[50vh] overflow-hidden">
+      <div className="relative h-[45vh] overflow-hidden">
         {set.coverImage && (
           <Image src={set.coverImage} alt={set.title} fill
             className="object-cover" priority sizes="100vw" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-black/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full px-6 md:px-12 max-w-[1600px] mx-auto pb-12">
+        <div className="absolute bottom-0 left-0 w-full px-6 md:px-12 max-w-[1600px] mx-auto pb-10">
           <Link href="/sets"
             className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors mb-6 inline-flex items-center gap-2">
             ← All Sets
@@ -61,9 +60,9 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
         </div>
       </div>
 
-      {/* Image grid with lightbox */}
+      {/* Gallery with lightbox */}
       <div className="px-6 md:px-12 max-w-[1600px] mx-auto py-12">
-        <ImageGrid images={gridImages} columns={3} />
+        <SetGallery images={gridImages} />
       </div>
 
       {/* Prev / Next */}
@@ -80,7 +79,6 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
               </div>
             </Link>
           ) : <div />}
-
           {nextSet ? (
             <Link href={`/sets/${nextSet.slug}`} className="group flex items-center gap-4 text-right">
               <div>

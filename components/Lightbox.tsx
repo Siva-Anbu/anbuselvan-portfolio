@@ -30,8 +30,8 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'Escape')     onClose();
+      if (e.key === 'ArrowLeft')  prev();
       if (e.key === 'ArrowRight') next();
     };
     window.addEventListener('keydown', onKey);
@@ -45,14 +45,50 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
   const current = images[index];
 
   return (
+    /* Full screen overlay — click backdrop to close */
     <div
-      className="fixed inset-0 z-[1000] bg-black"
+      className="fixed inset-0 bg-black"
+      style={{ zIndex: 9999 }}
       onClick={onClose}
     >
-      {/* Full screen image — no wrappers causing black space */}
+      {/* ── Close button ── */}
+      <button
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        aria-label="Close"
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 10001,
+          width: '44px',
+          height: '44px',
+          borderRadius: '50%',
+          background: 'rgba(0,0,0,0.7)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          color: 'white',
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M3 3L15 15M15 3L3 15" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </button>
+
+      {/* ── Centred image ── */}
       <div
-        className="absolute inset-0 flex items-center justify-center"
         onClick={(e) => e.stopPropagation()}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000,
+          padding: '60px 80px',   /* room for close btn + nav arrows */
+        }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -61,59 +97,88 @@ export default function Lightbox({ images, initialIndex, onClose }: LightboxProp
           alt={current.alt}
           onLoad={() => setLoaded(true)}
           style={{
-            maxWidth: 'calc(100vw - 80px)',
-            maxHeight: 'calc(100vh - 80px)',
-            width: 'auto',
-            height: 'auto',
-            objectFit: 'contain',
-            opacity: loaded ? 1 : 0,
+            maxWidth:   '100%',
+            maxHeight:  '100%',
+            width:      'auto',
+            height:     'auto',
+            objectFit:  'contain',
+            display:    'block',
+            opacity:    loaded ? 1 : 0,
             transition: 'opacity 0.3s ease',
-            display: 'block',
           }}
         />
       </div>
 
-      {/* Gradient overlays top and bottom for controls visibility */}
-      <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-[1010]" />
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/60 to-transparent pointer-events-none z-[1010]" />
-
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-5 right-5 z-[1010] w-10 h-10 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
-        aria-label="Close"
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
-      </button>
-
-      {/* Prev / Next */}
+      {/* ── Prev arrow ── */}
       {images.length > 1 && (
-        <>
-          <button
-            onClick={(e) => { e.stopPropagation(); prev(); }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-[1010] w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
-            aria-label="Previous"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M11 4L6 9L11 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); next(); }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-[1010] w-11 h-11 flex items-center justify-center text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full transition-all"
-            aria-label="Next"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M7 4L12 9L7 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </>
+        <button
+          onClick={(e) => { e.stopPropagation(); prev(); }}
+          aria-label="Previous"
+          style={{
+            position: 'fixed',
+            left: '16px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 10001,
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            background: 'rgba(0,0,0,0.7)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M11 4L6 9L11 14" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
       )}
 
-      {/* Counter */}
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-[1010] font-mono text-[10px] tracking-[0.3em] text-white/40">
+      {/* ── Next arrow ── */}
+      {images.length > 1 && (
+        <button
+          onClick={(e) => { e.stopPropagation(); next(); }}
+          aria-label="Next"
+          style={{
+            position: 'fixed',
+            right: '16px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            zIndex: 10001,
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            background: 'rgba(0,0,0,0.7)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M7 4L12 9L7 14" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+      )}
+
+      {/* ── Counter ── */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 10001,
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          letterSpacing: '0.2em',
+          color: 'rgba(255,255,255,0.4)',
+        }}
+      >
         {String(index + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
       </div>
     </div>

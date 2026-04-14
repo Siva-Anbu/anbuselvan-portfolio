@@ -104,6 +104,23 @@ export default function Lightbox({
               msUserSelect: 'none',
             }}
           />
+          {/* IMAGE TITLE */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '50px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              color: 'white',
+              fontSize: '14px',
+              background: 'rgba(0,0,0,0.4)',
+              padding: '6px 12px',
+              borderRadius: '6px',
+              pointerEvents: 'none',
+            }}
+          >
+            {img.alt}
+          </div>
         </div>
       </div>
 

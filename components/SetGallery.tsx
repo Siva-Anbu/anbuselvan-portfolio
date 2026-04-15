@@ -10,6 +10,16 @@ interface GalleryImage {
   alt: string;
 }
 
+// Clean up the image name for display:
+// removes Cloudinary public ID suffixes like _uhfajl, _xqxzca etc.
+function formatImageName(alt: string): string {
+  return alt
+    .replace(/_[a-z0-9]{6,}$/i, '')   // remove Cloudinary suffix
+    .replace(/[_-]/g, ' ')             // underscores/dashes → spaces
+    .replace(/\b\w/g, (c) => c.toUpperCase()) // Title Case
+    .trim();
+}
+
 function Lightbox({
   images,
   index,
@@ -24,6 +34,7 @@ function Lightbox({
   onNext: () => void;
 }) {
   const img = images[index];
+  const imageName = formatImageName(img.alt);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -68,13 +79,31 @@ function Lightbox({
         justifyContent: 'center',
       }}
     >
-      {/* Image Wrapper (controls size properly) */}
+      {/* Image name — top right of lightbox */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '18px',
+          right: '72px', // offset so it doesn't overlap close button
+          zIndex: 2147483647,
+          color: 'rgba(255,255,255,0.55)',
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          pointerEvents: 'none',
+        }}
+      >
+        {imageName}
+      </div>
+
+      {/* Image Wrapper */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100vw',
           height: '100vh',
-          padding: '60px', // gives breathing space
+          padding: '60px',
           boxSizing: 'border-box',
           display: 'flex',
           alignItems: 'center',
@@ -235,7 +264,24 @@ export default function SetGallery({
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+
+            {/* Dark overlay on hover */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
+
+            {/* Image name — top right, visible on hover */}
+            <div className="
+              absolute top-3 right-3
+              opacity-0 group-hover:opacity-100
+              transition-opacity duration-300
+              font-mono text-[10px] tracking-[0.2em] uppercase
+              text-white/80
+              bg-black/50 backdrop-blur-sm
+              px-2 py-1 rounded-sm
+              pointer-events-none
+              max-w-[70%] truncate
+            ">
+              {formatImageName(img.alt)}
+            </div>
           </div>
         ))}
       </div>

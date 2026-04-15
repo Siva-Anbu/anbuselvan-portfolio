@@ -122,8 +122,8 @@ function buildImage(resource: any): CloudinaryImage {
   return {
     id: resource.public_id,
     publicId: resource.public_id,
-    url: buildUrl(resource.public_id, "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_250"),
-    heroUrl: buildUrl(resource.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_300"),
+    url: buildUrl(resource.public_id, "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
+    heroUrl: buildUrl(resource.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
     thumbUrl: buildUrl(resource.public_id, "w_200,q_70,f_auto"),
     alt,
     tags,

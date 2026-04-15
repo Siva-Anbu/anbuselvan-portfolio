@@ -5,7 +5,7 @@ import { getAboutPortrait } from '@/lib/cloudinary';
 
 export const metadata = {
   title: 'About — Anbuselvan Sivaraju',
-  description: 'Copenhagen-based travel and street photographer with over two decades behind the lens.',
+  description: 'Copenhagen-based photographer with over two decades behind the lens.',
 };
 
 export default async function AboutPage() {
@@ -51,7 +51,7 @@ export default async function AboutPage() {
                   Anbuselvan Sivaraju
                 </p>
                 <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/40 mt-1">
-                  Travel Photographer · Copenhagen
+                  Photographer · Copenhagen
                 </p>
               </div>
             </div>

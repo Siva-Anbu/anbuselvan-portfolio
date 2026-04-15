@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import type { CloudinaryImage } from '@/lib/cloudinary';
 
@@ -15,36 +15,61 @@ const photoQuotes = [
   { text: 'To photograph is to hold breath when all faculties converge to capture fleeting reality.', author: 'Henri Cartier-Bresson' },
   { text: 'Which of my photographs is my favorite? The one I am going to take tomorrow.', author: 'Imogen Cunningham' },
   { text: 'Photography is the story I fail to put into words.', author: 'Destin Sparks' },
+  { text: 'Every photograph is a certificate of presence.', author: 'Roland Barthes' },
+  { text: 'Light makes photography. Embrace light. Admire it. Love it. But above all, know light.', author: 'George Eastman' },
+  { text: 'Photography takes an instant out of time, altering life by holding it still.', author: 'Dorothea Lange' },
+  { text: 'A good photograph is knowing where to stand.', author: 'Ansel Adams' },
+  { text: 'The camera is an instrument that teaches people how to see without a camera.', author: 'Dorothea Lange' },
+  { text: 'In photography there is a reality so subtle that it becomes more real than reality.', author: 'Alfred Stieglitz' },
 ];
 
+// Fisher-Yates shuffle — returns a new shuffled array
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function HeroCarousel({ images }: HeroCarouselProps) {
-  const [current, setCurrent] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [quoteIndex, setQuoteIndex] = useState(0);
-  const [quoteFade, setQuoteFade] = useState(true);
+  // Shuffle images once on mount — useMemo with empty deps so it never re-shuffles mid-session
+  const shuffledImages = useMemo(() => shuffle(images), []);
+
+  const [current, setCurrent]     = useState(0);
+  const [loading, setLoading]     = useState(true);
+  // Start at a random quote index
+  const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * photoQuotes.length));
+  const [quoteFade, setQuoteFade]   = useState(true);
 
   const advance = useCallback(() => {
-    setCurrent((c) => (c + 1) % images.length);
-  }, [images.length]);
+    setCurrent((c) => (c + 1) % shuffledImages.length);
+  }, [shuffledImages.length]);
 
   useEffect(() => {
-    if (images.length === 0) return;
+    if (shuffledImages.length === 0) return;
     const timer = setInterval(advance, 6000);
     return () => clearInterval(timer);
-  }, [advance, images.length]);
+  }, [advance, shuffledImages.length]);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setQuoteFade(false);
       setTimeout(() => {
-        setQuoteIndex((q) => (q + 1) % photoQuotes.length);
+        setQuoteIndex((q) => {
+          // Pick a random next quote that is different from current
+          let next;
+          do { next = Math.floor(Math.random() * photoQuotes.length); } while (next === q);
+          return next;
+        });
         setQuoteFade(true);
       }, 600);
     }, 8000);
     return () => clearInterval(timer);
   }, []);
 
-  if (images.length === 0) {
+  if (shuffledImages.length === 0) {
     return (
       <section className="relative w-full h-screen bg-[#0a0a0a] flex items-center justify-center">
         <p className="font-mono text-[10px] tracking-widest uppercase text-white/20">Loading...</p>
@@ -57,7 +82,7 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
   return (
     <section className="relative w-full h-screen overflow-hidden">
       {/* Images */}
-      {images.map((img, i) => (
+      {shuffledImages.map((img, i) => (
         <div key={img.id} className="absolute inset-0 transition-opacity duration-[2500ms] ease-in-out"
           style={{ opacity: i === current ? 1 : 0, zIndex: i === current ? 1 : 0 }}>
           <div className="absolute inset-0"
@@ -73,7 +98,7 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
       {/* Hero text */}
       <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 md:px-16 transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
 
-        {/* Main quote — slightly smaller, more refined */}
+        {/* Main title */}
         <div className="max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
           <h1 style={{
             fontFamily: '"Cormorant Garamond", Georgia, serif',
@@ -91,7 +116,7 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
           </h1>
         </div>
 
-        {/* Rotating quote bottom — bigger */}
+        {/* Rotating quote bottom */}
         <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 text-center">
           <div className="transition-opacity duration-500" style={{ opacity: quoteFade ? 1 : 0 }}>
             <p style={{
@@ -105,7 +130,7 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
               &ldquo;{quote.text}&rdquo;
             </p>
             <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/30 mt-3">
-              {quote.author}
+              — {quote.author}
             </p>
           </div>
         </div>
@@ -113,7 +138,7 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
 
       {/* Progress dots */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">
-        {images.map((_, i) => (
+        {shuffledImages.map((_, i) => (
           <button key={i} onClick={() => setCurrent(i)} aria-label={`Slide ${i + 1}`}>
             <div className={`h-[2px] transition-all duration-500 ${i === current ? 'w-8' : 'w-2 bg-white/30'}`}
               style={{ background: i === current ? 'var(--accent)' : undefined }} />

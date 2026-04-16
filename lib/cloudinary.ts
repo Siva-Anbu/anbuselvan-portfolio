@@ -1,15 +1,15 @@
 // lib/cloudinary.ts
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
-const API_KEY    = process.env.CLOUDINARY_API_KEY!;
+const API_KEY = process.env.CLOUDINARY_API_KEY!;
 const API_SECRET = process.env.CLOUDINARY_API_SECRET!;
 
 // ── Tag definitions ───────────────────────────────────────────────────────────
 const TAG_TO_SET: Record<string, string> = {
   blackandwhite: "black-and-white",
-  landscape:     "landscape",
-  lifescape:     "lifescape",
-  wildlife:      "wildlife",
-  drone:         "drone",
+  landscape: "landscape",
+  lifescape: "lifescape",
+  wildlife: "wildlife",
+  drone: "drone",
 };
 
 // ALL special/reserved tags — anything NOT in this list is treated as a country name
@@ -19,45 +19,45 @@ const RESERVED_TAGS = new Set([
 ]);
 
 const SET_META: Record<string, { title: string; subtitle: string; order: number }> = {
-  landscape:         { title: "Landscape",     subtitle: "Earth, sky, and the space between",        order: 1 },
-  "black-and-white": { title: "Black & White", subtitle: "When colour steps aside, truth remains",   order: 2 },
-  lifescape:         { title: "Lifescape",     subtitle: "People, streets, and quiet human moments", order: 3 },
-  wildlife:          { title: "Wildlife",      subtitle: "Wild eyes, wild places",                   order: 4 },
-  drone:             { title: "Drone",         subtitle: "The world seen from above",                order: 5 },
+  landscape: { title: "Landscape", subtitle: "Earth, sky, and the space between", order: 3 },
+  "black-and-white": { title: "Black & White", subtitle: "When colour steps aside, truth remains", order: 1 },
+  lifescape: { title: "Lifescape", subtitle: "People, streets, and quiet human moments", order: 4 },
+  wildlife: { title: "Wildlife", subtitle: "Wild eyes, wild places", order: 5 },
+  drone: { title: "Drone", subtitle: "The world seen from above", order: 2 },
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface CloudinaryImage {
-  id:       string;
+  id: string;
   publicId: string;
-  url:      string;
-  heroUrl:  string;
+  url: string;
+  heroUrl: string;
   thumbUrl: string;
-  alt:      string;
-  tags:     string[];
-  country:  string | null;
-  year:     string | null;
-  set:      string | null;
+  alt: string;
+  tags: string[];
+  country: string | null;
+  year: string | null;
+  set: string | null;
 }
 
 export interface FeaturedSet {
-  slug:       string;
-  title:      string;
-  subtitle:   string;
+  slug: string;
+  title: string;
+  subtitle: string;
   coverImage: string;
-  images:     CloudinaryImage[];
+  images: CloudinaryImage[];
 }
 export type PhotoSet = FeaturedSet;
 
 export interface Country {
-  name:        string;
-  slug:        string;
-  coverImage:  string;
-  years:       string;
+  name: string;
+  slug: string;
+  coverImage: string;
+  years: string;
   visitedYear: string;
-  images:      CloudinaryImage[];
-  photoCount:  number;
+  images: CloudinaryImage[];
+  photoCount: number;
 }
 
 // ── Cloudinary Search API ─────────────────────────────────────────────────────
@@ -69,14 +69,14 @@ async function searchCloudinary(expression: string): Promise<any[]> {
     {
       method: "POST",
       headers: {
-        "Content-Type":  "application/json",
+        "Content-Type": "application/json",
         "Authorization": `Basic ${credentials}`,
       },
       body: JSON.stringify({
         expression,
-        with_field:  ["tags", "context"],
+        with_field: ["tags", "context"],
         max_results: 500,
-        sort_by:     [{ created_at: "asc" }],
+        sort_by: [{ created_at: "asc" }],
       }),
       next: { revalidate: 60 },
     }
@@ -97,19 +97,19 @@ function buildUrl(publicId: string, transformation: string): string {
 
 function buildImage(resource: any): CloudinaryImage {
   const tags: string[] = resource.tags ?? [];
-  const context        = resource.context?.custom ?? {};
+  const context = resource.context?.custom ?? {};
 
   // Set — must have an exact set tag
   const setTag = tags.find((t) => TAG_TO_SET[t.toLowerCase()]);
-  const set    = setTag ? TAG_TO_SET[setTag.toLowerCase()] : null;
+  const set = setTag ? TAG_TO_SET[setTag.toLowerCase()] : null;
 
   // Country — any tag that is NOT reserved (not a set/hero/portrait tag)
   const countryTag = tags.find((t) => !RESERVED_TAGS.has(t.toLowerCase()));
-  const country    = countryTag ?? null;
+  const country = countryTag ?? null;
 
   // Year — "year:2024" or plain "2024"
   const yearTag = tags.find((t) => t.startsWith("year:") || /^\d{4}$/.test(t));
-  const year    = yearTag
+  const year = yearTag
     ? yearTag.startsWith("year:") ? yearTag.replace("year:", "") : yearTag
     : null;
 
@@ -119,10 +119,10 @@ function buildImage(resource: any): CloudinaryImage {
     ?? resource.public_id;
 
   return {
-    id:       resource.public_id,
+    id: resource.public_id,
     publicId: resource.public_id,
-    url:      buildUrl(resource.public_id, "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
-    heroUrl:  buildUrl(resource.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
+    url: buildUrl(resource.public_id, "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
+    heroUrl: buildUrl(resource.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
     thumbUrl: buildUrl(resource.public_id, "w_200,q_70,f_auto"),
     alt,
     tags,
@@ -133,18 +133,18 @@ function buildImage(resource: any): CloudinaryImage {
 }
 
 function buildCountry(name: string, images: CloudinaryImage[]): Country {
-  const years     = images.map((i) => i.year).filter(Boolean) as string[];
-  const minYear   = years.length ? Math.min(...years.map(Number)).toString() : "";
-  const maxYear   = years.length ? Math.max(...years.map(Number)).toString() : "";
+  const years = images.map((i) => i.year).filter(Boolean) as string[];
+  const minYear = years.length ? Math.min(...years.map(Number)).toString() : "";
+  const maxYear = years.length ? Math.max(...years.map(Number)).toString() : "";
   const yearRange = !minYear ? "" : minYear === maxYear ? minYear : `${minYear}–${maxYear}`;
   return {
     name,
-    slug:        name,
-    coverImage:  images[0].url,
-    years:       yearRange,
+    slug: name,
+    coverImage: images[0].url,
+    years: yearRange,
     visitedYear: yearRange,
     images,
-    photoCount:  images.length,
+    photoCount: images.length,
   };
 }
 
@@ -199,14 +199,14 @@ export async function getAllImages(): Promise<CloudinaryImage[]> {
 
 /** Stats for homepage */
 export async function getSiteStats(): Promise<{ countries: number; photographs: number }> {
-  const allImages  = await getAllImages();
+  const allImages = await getAllImages();
   const countrySet = new Set(allImages.map((img) => img.country).filter(Boolean));
   return { countries: countrySet.size, photographs: allImages.length };
 }
 
 /** All countries — built from country tags on all images */
 export async function getAllCountries(): Promise<Country[]> {
-  const allImages  = await getAllImages();
+  const allImages = await getAllImages();
   const countryMap: Record<string, CloudinaryImage[]> = {};
   for (const img of allImages) {
     if (!img.country) continue;
@@ -236,7 +236,7 @@ export async function getAllCountryNames(): Promise<string[]> {
 export async function getFeaturedSets(): Promise<FeaturedSet[]> {
   const allImages = await getAllImages();
   const sets: FeaturedSet[] = Object.entries(SET_META).map(([slug, meta]) => {
-    const images     = allImages.filter((img) => img.set === slug);
+    const images = allImages.filter((img) => img.set === slug);
     const coverImage = images[0]?.url ?? "";
     return { slug, ...meta, coverImage, images };
   });

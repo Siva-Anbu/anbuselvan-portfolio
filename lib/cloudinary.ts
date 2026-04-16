@@ -165,35 +165,21 @@ export async function getAboutPortrait(): Promise<string | null> {
 
 /**
  * All portfolio images — ONE single Cloudinary query.
- * Fetches everything that has a set tag OR a country tag.
- * Works because:
- * - Set-tagged images: have lifescape/landscape/etc
- * - Country-only images: just need a country tag
- * - hero/portrait-only images: excluded (they have no set or country tag)
- *
- * Single query = no rate limit issues.
+ * Fetches ALL uploaded images, then excludes hero/portrait-only assets.
+ * This is fully dynamic — no hardcoded country list needed.
+ * Adding a new country tag in Cloudinary is all that's required.
  */
 export async function getAllImages(): Promise<CloudinaryImage[]> {
-  const setTagList = Object.keys(TAG_TO_SET).join(" OR tags=");
+  const resources = await searchCloudinary("resource_type=image");
 
-  // All known country tags from Cloudinary
-  const countryTags = [
-    "Croatia", "croatia",
-    "Germany", "Peru", "Poland", "Spain",
-    "Czechia", "Denmark", "Egypt", "Estonia",
-    "Finland", "France", "Iceland", "India",
-    "Kenya", "Mauritius", "Nepal", "Netherlands",
-    "Romania", "SriLanka", "Sweden", "UAE",
-  ].join(" OR tags=");
-
-  const resources = await searchCloudinary(
-    `tags=${setTagList} OR tags=${countryTags}`
-  );
-
-  // Deduplicate by public_id (in case image matches both set and country)
+  // Exclude images that have ONLY reserved tags (hero/portrait with no country or set)
   const seen = new Set<string>();
   return resources
-    .filter((r) => !seen.has(r.public_id) && seen.add(r.public_id))
+    .filter((r) => {
+      const tags: string[] = r.tags ?? [];
+      const hasNonReserved = tags.some((t: string) => !RESERVED_TAGS.has(t.toLowerCase()));
+      return hasNonReserved && !seen.has(r.public_id) && seen.add(r.public_id);
+    })
     .map(buildImage);
 }
 

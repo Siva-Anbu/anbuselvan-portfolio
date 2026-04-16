@@ -1,11 +1,33 @@
 // app/sets/page.tsx
 // Reads all sets dynamically from Cloudinary — no portfolio.ts needed.
 
+import type { Metadata } from 'next';
 import Link from "next/link";
 import Image from "next/image";
 import { getFeaturedSets } from "@/lib/cloudinary";
 
-export const revalidate = 60; // ISR: rebuild this page every 60 seconds
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Featured Sets',
+  description:
+    'Curated photography collections by Anbuselvan Sivaraju — Landscape, Black & White, Lifescape, Wildlife, and Drone photography from travels across 35+ countries.',
+  alternates: { canonical: 'https://anbuselvan-sivaraju.vercel.app/sets' },
+  openGraph: {
+    title: 'Featured Sets | Anbuselvan Sivaraju',
+    description:
+      'Browse curated photography collections — landscape, street, drone, wildlife, and black & white photography.',
+    url: 'https://anbuselvan-sivaraju.vercel.app/sets',
+    images: [
+      {
+        url: 'https://res.cloudinary.com/dnqfhp432/image/upload/w_1200,h_630,c_fill,q_85,f_auto/Iceland%20greenery%20near%20waterfall',
+        width: 1200,
+        height: 630,
+        alt: 'Iceland landscape photograph — Featured Sets by Anbuselvan Sivaraju',
+      },
+    ],
+  },
+};
 
 export default async function SetsPage() {
   const sets = await getFeaturedSets();
@@ -35,7 +57,7 @@ export default async function SetsPage() {
                 {set.coverImage && (
                   <Image
                     src={set.coverImage}
-                    alt={set.title}
+                    alt={`${set.title} photography by Anbuselvan Sivaraju`}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 50vw"

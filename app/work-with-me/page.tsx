@@ -1,9 +1,26 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 
-export const metadata = {
-  title: 'Work With Me - Anbuselvan Sivaraju',
-  description: 'Collaborate with Anbuselvan Sivaraju for portrait, maternity, events and couple photography.',
+export const metadata: Metadata = {
+  title: 'Work With Me',
+  description:
+    'Book Anbuselvan Sivaraju for maternity photography, couple shoots, birthday coverage, or private events in Copenhagen. Relaxed, natural sessions focused on real moments.',
+  alternates: { canonical: 'https://anbuselvan-sivaraju.vercel.app/work-with-me' },
+  openGraph: {
+    title: 'Work With Me | Anbuselvan Sivaraju',
+    description:
+      'Book a photography session in Copenhagen — maternity, couples, birthdays, and private events. Unhurried, natural, genuine.',
+    url: 'https://anbuselvan-sivaraju.vercel.app/work-with-me',
+    images: [
+      {
+        url: 'https://res.cloudinary.com/dnqfhp432/image/upload/w_1200,h_630,c_fill,q_85,f_auto/DSC07725_tkefef',
+        width: 1200,
+        height: 630,
+        alt: 'Photography session by Anbuselvan Sivaraju — Copenhagen',
+      },
+    ],
+  },
 };
 
 const services = [

@@ -1,12 +1,33 @@
 // app/countries/page.tsx
 // Countries page — auto-generates from Cloudinary "country:XX" tags.
-// Upload a photo tagged "country:Nepal" and Nepal appears here automatically.
 
+import type { Metadata } from 'next';
 import Link from "next/link";
 import Image from "next/image";
 import { getAllCountries } from "@/lib/cloudinary";
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Countries',
+  description:
+    'Travel photography from 35+ countries by Anbuselvan Sivaraju — Denmark, India, Iceland, Kenya, France, Egypt, Nepal, and beyond.',
+  alternates: { canonical: 'https://anbuselvan-sivaraju.vercel.app/countries' },
+  openGraph: {
+    title: 'Countries | Anbuselvan Sivaraju',
+    description:
+      'Photographs from 35+ countries across Europe, Asia, Africa, and South America.',
+    url: 'https://anbuselvan-sivaraju.vercel.app/countries',
+    images: [
+      {
+        url: 'https://res.cloudinary.com/dnqfhp432/image/upload/w_1200,h_630,c_fill,q_85,f_auto/African%20Tusker',
+        width: 1200,
+        height: 630,
+        alt: 'African elephant — travel photography by Anbuselvan Sivaraju',
+      },
+    ],
+  },
+};
 
 export default async function CountriesPage() {
   const countries = await getAllCountries();
@@ -49,7 +70,7 @@ export default async function CountriesPage() {
               <div className="relative aspect-[3/2] overflow-hidden bg-white/5">
                 <Image
                   src={country.coverImage}
-                  alt={country.name}
+                  alt={`${country.name} travel photography by Anbuselvan Sivaraju`}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

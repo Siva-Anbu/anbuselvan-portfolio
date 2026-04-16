@@ -1,9 +1,31 @@
+import type { Metadata } from 'next';
 import { getHeroImages, getFeaturedSets, getCountries, getSiteStats } from '@/lib/cloudinary';
 import HeroCarousel from '@/components/HeroCarousel';
 import FeaturedSetsSection from '@/components/FeaturedSetsSection';
 import CountriesSection from '@/components/CountriesSection';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Anbuselvan Sivaraju — Photography',
+  description:
+    'Photography portfolio of Anbuselvan Sivaraju — Copenhagen-based photographer capturing people, places, and quiet moments across 35+ countries since 2002.',
+  alternates: { canonical: 'https://anbuselvan-sivaraju.vercel.app/' },
+  openGraph: {
+    title: 'Anbuselvan Sivaraju — Photography',
+    description:
+      'Copenhagen-based photographer capturing the world through his viewfinder. Browse travel, drone, lifescape, and black & white photography.',
+    url: 'https://anbuselvan-sivaraju.vercel.app/',
+    images: [
+      {
+        url: 'https://res.cloudinary.com/dnqfhp432/image/upload/w_1200,h_630,c_fill,q_85,f_auto/DSC07725_tkefef',
+        width: 1200,
+        height: 630,
+        alt: 'Anbuselvan Sivaraju Photography portfolio',
+      },
+    ],
+  },
+};
 
 export default async function Home() {
   const [heroImages, featuredSets, countries, stats] = await Promise.all([

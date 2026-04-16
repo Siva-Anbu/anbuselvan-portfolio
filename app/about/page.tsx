@@ -1,11 +1,28 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import Footer from '@/components/Footer';
 import { getAboutPortrait } from '@/lib/cloudinary';
 
-export const metadata = {
-  title: 'About — Anbuselvan Sivaraju',
-  description: 'Copenhagen-based photographer with over two decades behind the lens.',
+export const metadata: Metadata = {
+  title: 'About',
+  description:
+    'Anbuselvan Sivaraju is a Copenhagen-based photographer with 20+ years behind the lens, documenting honest human moments across 35+ countries since 2002.',
+  alternates: { canonical: 'https://anbuselvan-sivaraju.vercel.app/about' },
+  openGraph: {
+    title: 'About | Anbuselvan Sivaraju',
+    description:
+      'Learn the story behind the photographer — 20+ years, 35+ countries, and a lifelong obsession with real, unguarded moments.',
+    url: 'https://anbuselvan-sivaraju.vercel.app/about',
+    images: [
+      {
+        url: 'https://res.cloudinary.com/dnqfhp432/image/upload/w_1200,h_630,c_fill,q_90,f_auto/DSC01052_oubdub',
+        width: 1200,
+        height: 630,
+        alt: 'Anbuselvan Sivaraju — Copenhagen-based photographer',
+      },
+    ],
+  },
 };
 
 export default async function AboutPage() {
@@ -32,7 +49,7 @@ export default async function AboutPage() {
               {portraitUrl ? (
                 <Image
                   src={portraitUrl}
-                  alt="Anbuselvan Sivaraju — photographer"
+                  alt="Anbuselvan Sivaraju — photographer based in Copenhagen"
                   fill
                   className="object-cover"
                   quality={90}

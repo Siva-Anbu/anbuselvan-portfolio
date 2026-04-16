@@ -164,34 +164,37 @@ export async function getAboutPortrait(): Promise<string | null> {
 }
 
 /**
- * All portfolio images.
- * Strategy:
- * 1. Fetch all images that have a set tag (lifescape, landscape, etc.)
- * 2. Fetch ALL images from the account
- * 3. Merge both — deduplicate by public_id
- * 4. Filter out hero/portrait-only images (images with no set tag AND no country tag)
- * This ensures country-only tagged images are always included.
+ * All portfolio images — ONE single Cloudinary query.
+ * Fetches everything that has a set tag OR a country tag.
+ * Works because:
+ * - Set-tagged images: have lifescape/landscape/etc
+ * - Country-only images: just need a country tag
+ * - hero/portrait-only images: excluded (they have no set or country tag)
+ *
+ * Single query = no rate limit issues.
  */
 export async function getAllImages(): Promise<CloudinaryImage[]> {
   const setTagList = Object.keys(TAG_TO_SET).join(" OR tags=");
 
-  // Fetch set-tagged images + ALL uploaded images in parallel
-  const [setImages, allUploaded] = await Promise.all([
-    searchCloudinary(`tags=${setTagList}`),
-    searchCloudinary("resource_type=image"),
-  ]);
+  // All known country tags from Cloudinary
+  const countryTags = [
+    "Croatia", "croatia",
+    "Germany", "Peru", "Poland", "Spain",
+    "Czechia", "Denmark", "Egypt", "Estonia",
+    "Finland", "France", "Iceland", "India",
+    "Kenya", "Mauritius", "Nepal", "Netherlands",
+    "Romania", "SriLanka", "Sweden", "UAE",
+  ].join(" OR tags=");
 
-  // Merge and deduplicate by public_id
+  const resources = await searchCloudinary(
+    `tags=${setTagList} OR tags=${countryTags}`
+  );
+
+  // Deduplicate by public_id (in case image matches both set and country)
   const seen = new Set<string>();
-  const merged = [...setImages, ...allUploaded]
-    .filter((r) => !seen.has(r.public_id) && seen.add(r.public_id));
-
-  // Build images and filter out:
-  // - hero-only images (no set, no country)
-  // - portrait-only images (no set, no country)
-  return merged
-    .map(buildImage)
-    .filter((img) => img.set !== null || img.country !== null);
+  return resources
+    .filter((r) => !seen.has(r.public_id) && seen.add(r.public_id))
+    .map(buildImage);
 }
 
 /** Stats for homepage */

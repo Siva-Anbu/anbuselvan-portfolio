@@ -3,22 +3,43 @@
 import { useState } from 'react';
 import Footer from '@/components/Footer';
 
-export default function ContactPage() {
+export default function ContactForm() {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (error) setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate submission (replace with real API call)
-    await new Promise((res) => setTimeout(res, 1200));
-    setLoading(false);
-    setSubmitted(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Something went wrong. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      setSubmitted(true);
+    } catch (err) {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,25 +91,6 @@ export default function ContactPage() {
                 </p>
               </div>
             </div>
-
-            {/* Divider */}
-            {/*
-            <div className="mt-10 pt-10 border-t border-white/5">
-              <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 mb-4">
-                Follow
-              </p>
-              <div className="flex gap-4">
-                {['Instagram', 'LinkedIn'].map((platform) => (
-                  <a
-                    key={platform}
-                    href="#"
-                    className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/30 hover:text-white/60 transition-colors"
-                  >
-                    {platform}
-                  </a>
-                ))}
-              </div>
-            </div> */}
           </div>
 
           {/* Right: form */}
@@ -168,6 +170,13 @@ export default function ContactPage() {
                     style={{ caretColor: 'var(--accent)' }}
                   />
                 </div>
+
+                {/* Error message */}
+                {error && (
+                  <p className="font-mono text-[10px] tracking-[0.15em] text-red-400">
+                    {error}
+                  </p>
+                )}
 
                 {/* Submit */}
                 <div className="pt-4">

@@ -165,30 +165,33 @@ export async function getAboutPortrait(): Promise<string | null> {
 
 /**
  * All portfolio images.
- * Fetches BOTH:
- * 1. Images with a set tag (lifescape, landscape, drone, wildlife, blackandwhite)
- * 2. Images with ONLY a country tag — so country-only uploads still appear in countries page
- * Deduplicates by public_id so no image appears twice.
+ * Strategy:
+ * 1. Fetch all images that have a set tag (lifescape, landscape, etc.)
+ * 2. Fetch ALL images from the account
+ * 3. Merge both — deduplicate by public_id
+ * 4. Filter out hero/portrait-only images (images with no set tag AND no country tag)
+ * This ensures country-only tagged images are always included.
  */
 export async function getAllImages(): Promise<CloudinaryImage[]> {
   const setTagList = Object.keys(TAG_TO_SET).join(" OR tags=");
 
-  // Exclude all reserved tags to find country-only tagged images
-  const reservedExclusions = Array.from(RESERVED_TAGS)
-    .map((t) => `NOT tags=${t}`)
-    .join(" AND ");
-
-  // Run both queries in parallel for performance
-  const [setImages, countryOnlyImages] = await Promise.all([
+  // Fetch set-tagged images + ALL uploaded images in parallel
+  const [setImages, allUploaded] = await Promise.all([
     searchCloudinary(`tags=${setTagList}`),
-    searchCloudinary(`${reservedExclusions} AND tags=*`),
+    searchCloudinary("resource_type=image"),
   ]);
 
   // Merge and deduplicate by public_id
   const seen = new Set<string>();
-  return [...setImages, ...countryOnlyImages]
-    .filter((r) => !seen.has(r.public_id) && seen.add(r.public_id))
-    .map(buildImage);
+  const merged = [...setImages, ...allUploaded]
+    .filter((r) => !seen.has(r.public_id) && seen.add(r.public_id));
+
+  // Build images and filter out:
+  // - hero-only images (no set, no country)
+  // - portrait-only images (no set, no country)
+  return merged
+    .map(buildImage)
+    .filter((img) => img.set !== null || img.country !== null);
 }
 
 /** Stats for homepage */

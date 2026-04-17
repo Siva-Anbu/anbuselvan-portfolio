@@ -63,13 +63,28 @@ export default async function AboutPage() {
                 </div>
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-6">
-                <p className="font-mono text-lg  font-light" style={{ color: 'var(--accent)' }}>
-                  Anbuselvan Sivaraju
-                </p>
-                <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/40 mt-1">
-                  Photographer · Copenhagen
-                </p>
+              <div className="absolute bottom-0 left-0 p-6 w-full flex items-end justify-between">
+                <div>
+                  <p className="font-mono text-lg font-light" style={{ color: 'var(--accent)' }}>
+                    Anbuselvan Sivaraju
+                  </p>
+                  <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/40 mt-1">
+                    Photographer · Copenhagen
+                  </p>
+                </div>
+                <a
+                  href="https://www.instagram.com/s.anbuselvan/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="w-8 h-8 flex items-center justify-center rounded-full border border-white/20 bg-black/40 backdrop-blur-sm text-white/50 hover:text-white hover:border-white/50 transition-all duration-300"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
@@ -156,7 +171,7 @@ export default async function AboutPage() {
               </div>
 
               {/* CTAs */}
-              <div className="mt-12 flex flex-wrap gap-4">
+              <div className="mt-12 flex flex-wrap gap-4 items-center">
                 <Link href="/work-with-me"
                   className="font-mono text-[10px] tracking-[0.25em] uppercase px-6 py-3 border transition-all duration-300 hover:bg-white hover:text-black"
                   style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
@@ -166,6 +181,19 @@ export default async function AboutPage() {
                   className="font-mono text-[10px] tracking-[0.25em] uppercase px-6 py-3 border border-white/15 text-white/40 hover:border-white/30 hover:text-white/70 transition-all duration-300">
                   Get In Touch
                 </Link>
+                <a
+                  href="https://www.instagram.com/s.anbuselvan/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] uppercase px-6 py-3 border border-white/15 text-white/40 hover:border-white/30 hover:text-white/70 transition-all duration-300"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                  </svg>
+                  Instagram
+                </a>
               </div>
 
             </div>

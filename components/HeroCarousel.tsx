@@ -21,12 +21,12 @@ const photoQuotes = [
   { text: 'A good photograph is knowing where to stand.', author: 'Ansel Adams' },
   { text: 'The camera is an instrument that teaches people how to see without a camera.', author: 'Dorothea Lange' },
   { text: 'In photography there is a reality so subtle that it becomes more real than reality.', author: 'Alfred Stieglitz' },
-  { text: 'I don't trust words. I trust pictures.', author: 'Gilles Peress' },
-  { text: 'Taking pictures is savoring life intensely, every hundredth of a second..', author: 'Marc Riboud' },
+  { text: "I don't trust words. I trust pictures.", author: 'Gilles Peress' },
+  { text: 'Taking pictures is savoring life intensely, every hundredth of a second.', author: 'Marc Riboud' },
   { text: 'Black and white photography erases time from the equation.', author: 'Jason Peterson' },
   { text: 'The quickest way to make money at photography is to sell your camera.', author: 'Anonymous' },
-  { text: 'Don't pack up your camera until you've left the location.', author: 'Joe McNally' },
-  { text: 'There are no bad pictures; that's just how your face looks sometimes.', author: 'Abraham Lincoln' },
+  { text: "Don't pack up your camera until you've left the location.", author: 'Joe McNally' },
+  { text: "There are no bad pictures; that's just how your face looks sometimes.", author: 'Abraham Lincoln' },
   { text: 'The most colorful thing in the world is black and white, it contains all colors and at the same time excludes all.', author: 'Vikrmn' },
 ];
 

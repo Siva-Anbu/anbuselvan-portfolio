@@ -49,7 +49,7 @@ export default async function CountriesPage() {
           {/* Stats */}
           <div className="flex gap-12">
             <div>
-              <p className="font-mono text-3xl text-[#C9A96E]">{countries.length}</p>
+              <p className="font-mono text-3xl text-[#C9A96E]">35+</p>
               <p className="text-xs text-white/40 tracking-widest uppercase mt-1">Countries</p>
             </div>
             <div>
@@ -88,6 +88,55 @@ export default async function CountriesPage() {
               </div>
             </Link>
           ))}
+
+          {/* Coming Soon block */}
+          <div className="group block cursor-default">
+            <div className="relative aspect-[3/2] overflow-hidden bg-white/5 border border-white/10">
+
+              {/* Subtle animated gradient background */}
+              <div className="absolute inset-0"
+                style={{
+                  background: 'linear-gradient(135deg, #1a1a1a 0%, #0e0e0e 50%, #161410 100%)',
+                }} />
+
+              {/* Faint world map dots pattern */}
+              <div className="absolute inset-0 opacity-5"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, #C9A96E 1px, transparent 1px)',
+                  backgroundSize: '18px 18px',
+                }} />
+
+              {/* Center content */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-[#C9A96E]/60 mb-4">
+                  More Destinations
+                </p>
+                <h2
+                  className="text-white/80 mb-3"
+                  style={{
+                    fontFamily: '"Cormorant Garamond", Georgia, serif',
+                    fontSize: 'clamp(1.4rem, 2.5vw, 1.8rem)',
+                    fontWeight: 300,
+                  }}
+                >
+                  Coming Soon
+                </h2>
+                <div className="w-8 h-px bg-[#C9A96E]/40 mb-3" />
+                <p className="text-xs text-white/30 tracking-widest uppercase">
+                  More stories loading...
+                </p>
+              </div>
+
+              {/* Bottom label matching other cards */}
+              <div className="absolute bottom-0 left-0 p-5">
+                <p className="text-xs text-white/20 tracking-widest uppercase">
+                  35+ countries & counting
+                </p>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
     </main>

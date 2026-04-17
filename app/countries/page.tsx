@@ -54,7 +54,7 @@ export default async function CountriesPage() {
             </div>
             <div>
               <p className="font-display text-3xl text-[#C9A96E]">{totalPhotos}</p>
-              <p className="text-xs text-white/40 tracking-widest uppercase mt-1">Photographs</p>
+              <p className="font-display text-white/40 tracking-widest uppercase mt-1">Photographs</p>
             </div>
           </div>
         </div>
@@ -79,9 +79,9 @@ export default async function CountriesPage() {
                 <div className="absolute bottom-0 left-0 p-5">
                   <h2 className="font-display text-2xl md:text-3xl font-light text-white">{country.name}</h2>
                   {country.years && (
-                    <p className="text-xs text-white/50 mt-1">{country.years}</p>
+                    <p className="font-display text-white/50 mt-1">{country.years}</p>
                   )}
-                  <p className="text-xs text-white/40 mt-1">
+                  <p className="font-display text-white/40 mt-1">
                     {country.photoCount} photo{country.photoCount !== 1 ? "s" : ""}
                   </p>
                 </div>
@@ -108,7 +108,7 @@ export default async function CountriesPage() {
 
               {/* Center content */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-                <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-[#C9A96E]/60 mb-4">
+                <p className="font-display text-[10px] tracking-[0.35em] uppercase text-[#C9A96E]/60 mb-4">
                   More Destinations
                 </p>
                 <h2

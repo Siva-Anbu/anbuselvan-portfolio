@@ -37,7 +37,7 @@ export default async function SetsPage() {
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <div className="mb-16">
-          <p className="text-xs tracking-[0.25em] text-white/40 uppercase mb-4">
+          <p className="font-display tracking-[0.25em] text-white/40 uppercase mb-4">
             Curated Work
           </p>
           <h1 className="font-display text-5xl font-normal text-white/90 mb-8">
@@ -68,7 +68,7 @@ export default async function SetsPage() {
                   <p className="text-xs tracking-widest text-white/50 uppercase mb-1">
                     {set.images.length} frames
                   </p>
-                  <h2 className="font-cormorant text-3xl text-white">
+                  <h2 className="font-display text-3xl text-white">
                     {set.title}
                   </h2>
                   <p className="text-sm text-white/60 mt-1">{set.subtitle}</p>

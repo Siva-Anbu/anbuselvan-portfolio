@@ -54,7 +54,7 @@ export default function WorkWithMePage() {
   return (
     <main className="min-h-screen">
       <div className="pt-32 md:pt-40 px-6 md:px-12 max-w-[1600px] mx-auto border-b border-white/5 pb-16">
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/25 mb-4">
+        <p className="font-display text-[10px] tracking-[0.35em] uppercase text-white/25 mb-4">
           Collaborate
         </p>
         <h1 className="font-display text-5xl md:text-7xl font-light text-white leading-tight">

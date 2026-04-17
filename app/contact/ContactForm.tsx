@@ -46,7 +46,7 @@ export default function ContactForm() {
     <main className="min-h-screen">
       {/* Header */}
       <div className="pt-32 md:pt-40 pb-16 px-6 md:px-12 max-w-[1600px] mx-auto border-b border-white/5">
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/25 mb-4">
+        <p className="font-display text-[10px] tracking-[0.35em] uppercase text-white/25 mb-4">
           Reach Out
         </p>
         <h1 className="font-display text-5xl md:text-7xl font-light text-white">

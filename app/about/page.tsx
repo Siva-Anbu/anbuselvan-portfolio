@@ -31,10 +31,10 @@ export default async function AboutPage() {
     <main className="min-h-screen">
       {/* Header */}
       <div className="pt-32 md:pt-40 pb-0 px-6 md:px-12 max-w-[1600px] mx-auto">
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/25 mb-4">
+        <p className="font-display text-[10px] tracking-[0.35em] uppercase text-white/25 mb-4">
           The Story
         </p>
-        <h1 className="font-display text-5xl md:text-8xl font-light text-white leading-tight">
+        <h1 className="font-display text-5xl md:text-7xl font-light text-white leading-tight">
           About
         </h1>
       </div>

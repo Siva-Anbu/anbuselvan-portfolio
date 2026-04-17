@@ -78,7 +78,7 @@ export default function WorkWithMePage() {
       </div>
 
       <div className="px-6 md:px-12 max-w-[1600px] mx-auto pb-24">
-        <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/25 mb-12">
+        <p className="font-display text-[12px] tracking-[0.35em] uppercase text-white/25 mb-12">
           What I Offer
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/5">

@@ -39,7 +39,7 @@ export default function Navigation() {
                 Sivaraju
               </span>
             </div>
-            <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-white/25 mt-0.5">
+            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/55 mt-0.5">
               Captured. Crafted. Remembered !
             </span>
           </Link>
@@ -51,8 +51,8 @@ export default function Navigation() {
                 <Link
                   href={href}
                   className={`nav-link font-body text-[11px] tracking-[0.2em] uppercase transition-colors duration-300 ${pathname === href || pathname.startsWith(href + '/')
-                      ? 'text-white active'
-                      : 'text-white/50 hover:text-white/80'
+                    ? 'text-white active'
+                    : 'text-white/50 hover:text-white/80'
                     }`}
                 >
                   {label}

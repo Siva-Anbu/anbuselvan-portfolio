@@ -16,7 +16,7 @@ function SetCard({ set, index }: { set: FeaturedSet; index: number }) {
         <div className="relative overflow-hidden bg-white/5 mb-4" style={{ aspectRatio: '4/3' }}>
           {set.coverImage && (
             <Image src={set.coverImage} alt={set.title} fill
-              className="object-cover transition-transform duration-705 group-hover:scale-105"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               loading="lazy" />
           )}
@@ -39,12 +39,14 @@ function SetCard({ set, index }: { set: FeaturedSet; index: number }) {
           </h3>
           {set.subtitle && (
             <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/40 mt-1">
+              {set.subtitle}
+            </p>
           )}
-              <div className="mt-3 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-300 group-hover:gap-4"
-                style={{ color: 'var(--accent)' }}>
-                <span>View Set</span><span>→</span>
-              </div>
-            </div>
+          <div className="mt-3 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-300 group-hover:gap-4"
+            style={{ color: 'var(--accent)' }}>
+            <span>View Set</span><span>&rarr;</span>
+          </div>
+        </div>
       </Link>
     </div>
   );
@@ -61,7 +63,7 @@ export default function FeaturedSetsSection({ sets }: Props) {
           <h2 className="font-display text-4xl md:text-6xl font-light text-white">Featured Sets</h2>
         </div>
         <Link href="/sets" className="hidden md:flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-white/40 hover:text-white/70 transition-colors">
-          <span>All sets</span><span>→</span>
+          <span>All sets</span><span>&rarr;</span>
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">

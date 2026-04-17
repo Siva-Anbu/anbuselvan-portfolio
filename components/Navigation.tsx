@@ -39,7 +39,7 @@ export default function Navigation() {
                 Sivaraju
               </span>
             </div>
-            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/55 mt-0.5">
+            <span className="font-mono text-[8px] tracking-[0.3em] uppercase text-white/55 mt-0.5">
               Captured. Crafted. Remembered !
             </span>
           </Link>

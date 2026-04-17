@@ -64,7 +64,7 @@ export default async function AboutPage() {
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               <div className="absolute bottom-0 left-0 p-6">
-                <p className="font-display text-lg italic font-light" style={{ color: 'var(--accent)' }}>
+                <p className="font-mono text-lg  font-light" style={{ color: 'var(--accent)' }}>
                   Anbuselvan Sivaraju
                 </p>
                 <p className="font-mono text-[9px] tracking-[0.25em] uppercase text-white/40 mt-1">

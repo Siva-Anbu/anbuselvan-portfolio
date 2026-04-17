@@ -178,14 +178,16 @@ export default async function AboutPage() {
                   Work With Me
                 </Link>
                 <Link href="/contact"
-                  className="font-mono text-[10px] tracking-[0.25em] uppercase px-6 py-3 border border-white/15 text-white/40 hover:border-white/30 hover:text-white/70 transition-all duration-300">
+                  className="font-mono text-[10px] tracking-[0.25em] uppercase px-6 py-3 border transition-all duration-300 hover:bg-white hover:text-black"
+                  style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}>
                   Get In Touch
                 </Link>
                 <a
                   href="https://www.instagram.com/s.anbuselvan/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] uppercase px-6 py-3 border border-white/15 text-white/40 hover:border-white/30 hover:text-white/70 transition-all duration-300"
+                  className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] uppercase px-6 py-3 border transition-all duration-300 hover:bg-white hover:text-black"
+                  style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="2" width="20" height="20" rx="5" />

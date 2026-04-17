@@ -16,7 +16,7 @@ function SetCard({ set, index }: { set: FeaturedSet; index: number }) {
         <div className="relative overflow-hidden bg-white/5 mb-4" style={{ aspectRatio: '4/3' }}>
           {set.coverImage && (
             <Image src={set.coverImage} alt={set.title} fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="object-cover transition-transform duration-705 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               loading="lazy" />
           )}

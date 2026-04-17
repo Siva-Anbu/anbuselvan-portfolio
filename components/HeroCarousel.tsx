@@ -87,101 +87,85 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
   const quote = photoQuotes[quoteIndex];
 
   return (
-    <>
-      {/* ── HERO SECTION ── */}
-      <section className="relative w-full h-screen overflow-hidden">
-
-        {/* Images */}
-        {shuffledImages.map((img, i) => (
-          <div key={img.id} className="absolute inset-0 transition-opacity duration-[2500ms] ease-in-out"
-            style={{ opacity: i === current ? 1 : 0, zIndex: i === current ? 1 : 0 }}>
-            <div className="absolute inset-0"
-              style={{ animation: i === current ? 'kenBurns 14s ease-in-out forwards' : 'none' }}>
-              <Image src={img.heroUrl} alt={img.alt} fill priority={i === 0}
-                className="object-cover" sizes="100vw" quality={90}
-                onLoad={() => i === 0 && setLoading(false)} />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
+    <section className="relative w-full h-screen overflow-hidden">
+      {/* Images */}
+      {shuffledImages.map((img, i) => (
+        <div key={img.id} className="absolute inset-0 transition-opacity duration-[2500ms] ease-in-out"
+          style={{ opacity: i === current ? 1 : 0, zIndex: i === current ? 1 : 0 }}>
+          <div className="absolute inset-0"
+            style={{ animation: i === current ? 'kenBurns 14s ease-in-out forwards' : 'none' }}>
+            <Image src={img.heroUrl} alt={img.alt} fill priority={i === 0}
+              className="object-cover" sizes="100vw" quality={90}
+              onLoad={() => i === 0 && setLoading(false)} />
           </div>
-        ))}
-
-        {/* Rotating quote — bottom of hero */}
-        <div className={`absolute inset-0 z-10 transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 text-center">
-            <div className="transition-opacity duration-500" style={{ opacity: quoteFade ? 1 : 0 }}>
-              <p style={{
-                fontFamily: '"Cormorant Garamond", Georgia, serif',
-                fontStyle: 'italic',
-                fontSize: 'clamp(1.1rem, 2.2vw, 1.5rem)',
-                fontWeight: 300,
-                color: 'rgba(255,255,255,0.75)',
-                lineHeight: 1.6,
-              }}>
-                &ldquo;{quote.text}&rdquo;
-              </p>
-              <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/60 mt-3">
-                — {quote.author}
-              </p>
-            </div>
-          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
         </div>
+      ))}
 
-        {/* Progress dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">
-          {shuffledImages.map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)} aria-label={`Slide ${i + 1}`}>
-              <div className={`h-[2px] transition-all duration-500 ${i === current ? 'w-8' : 'w-2 bg-white/30'}`}
-                style={{ background: i === current ? 'var(--accent)' : undefined }} />
-            </button>
-          ))}
-        </div>
+      {/* Hero text */}
+      <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 md:px-16 transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 right-8 md:right-12 z-10 flex items-center gap-3 text-white/30">
-          <span className="font-mono text-[9px] tracking-[0.3em] uppercase">Scroll</span>
-          <div className="w-12 h-px bg-white/20 relative overflow-hidden">
-            <div className="absolute top-0 left-0 h-full bg-white/60"
-              style={{ width: '40%', animation: 'slideRight 2s ease infinite' }} />
-          </div>
-        </div>
-
-        <style jsx>{`
-          @keyframes slideRight { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
-          @keyframes kenBurns  { 0% { transform: scale(1); } 100% { transform: scale(1.07); } }
-        `}</style>
-      </section>
-
-      {/* ── QUOTE SECTION — below hero ── */}
-      <section className="w-full bg-[#0e0e0e] py-24 px-8 flex flex-col items-center justify-center text-center">
-        <div className="max-w-3xl mx-auto">
-
-          {/* Decorative top line */}
-          <div className="w-px h-12 bg-white/10 mx-auto mb-10" />
-
-          <p style={{
+        {/* Main title */}
+        <div className="max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+          <h1 style={{
             fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontSize: 'clamp(1.8rem, 4vw, 3.4rem)',
+            fontSize: 'clamp(1.8rem, 4vw, 3.8rem)',
             fontWeight: 300,
-            lineHeight: 1.25,
+            lineHeight: 1.15,
             letterSpacing: '0.01em',
-            color: 'rgba(255,255,255,0.92)',
+            color: 'rgba(255,255,255,0.95)',
           }}>
             Photography is a tool to freeze
             <br />
             <span style={{ fontStyle: 'italic' }}>
               a moment that speaks volumes.
             </span>
-          </p>
-
-          {/* Accent divider */}
-          <div className="mt-8 w-12 h-px mx-auto" style={{ background: 'var(--accent, #c9a96e)' }} />
-
-          <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/40 mt-5">
-            — Anbuselvan Sivaraju
-          </p>
-
+          </h1>
         </div>
-      </section>
-    </>
+
+        {/* Rotating quote bottom */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 text-center">
+          <div className="transition-opacity duration-500" style={{ opacity: quoteFade ? 1 : 0 }}>
+            <p style={{
+              fontFamily: '"Cormorant Garamond", Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: 'clamp(1.1rem, 2.2vw, 1.5rem)',
+              fontWeight: 300,
+              color: 'rgba(255,255,255,0.75)',
+              lineHeight: 1.6,
+            }}>
+              &ldquo;{quote.text}&rdquo;
+            </p>
+            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/60 mt-3">
+              — {quote.author}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Progress dots */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+        {shuffledImages.map((_, i) => (
+          <button key={i} onClick={() => setCurrent(i)} aria-label={`Slide ${i + 1}`}>
+            <div className={`h-[2px] transition-all duration-500 ${i === current ? 'w-8' : 'w-2 bg-white/30'}`}
+              style={{ background: i === current ? 'var(--accent)' : undefined }} />
+          </button>
+        ))}
+      </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 right-8 md:right-12 z-10 flex items-center gap-3 text-white/30">
+        <span className="font-mono text-[9px] tracking-[0.3em] uppercase">Scroll</span>
+        <div className="w-12 h-px bg-white/20 relative overflow-hidden">
+          <div className="absolute top-0 left-0 h-full bg-white/60"
+            style={{ width: '40%', animation: 'slideRight 2s ease infinite' }} />
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes slideRight { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+        @keyframes kenBurns  { 0% { transform: scale(1); } 100% { transform: scale(1.07); } }
+      `}</style>
+    </section>
   );
 }

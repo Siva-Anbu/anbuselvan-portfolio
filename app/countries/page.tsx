@@ -49,11 +49,11 @@ export default async function CountriesPage() {
           {/* Stats */}
           <div className="flex gap-12">
             <div>
-              <p className="font-mono text-3xl text-[#C9A96E]">35+</p>
-              <p className="text-xs text-white/40 tracking-widest uppercase mt-1">Countries</p>
+              <p className="font-display text-3xl text-[#C9A96E]">35+</p>
+              <p className="font-display text-white/40 tracking-widest uppercase mt-1">Countries</p>
             </div>
             <div>
-              <p className="font-mono text-3xl text-[#C9A96E]">{totalPhotos}</p>
+              <p className="font-display text-3xl text-[#C9A96E]">{totalPhotos}</p>
               <p className="text-xs text-white/40 tracking-widest uppercase mt-1">Photographs</p>
             </div>
           </div>

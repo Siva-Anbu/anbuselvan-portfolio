@@ -38,13 +38,13 @@ function SetCard({ set, index }: { set: FeaturedSet; index: number }) {
             {set.title}
           </h3>
           {set.subtitle && (
-            <p className="font-body text-[11px] tracking-[0.15em] text-white/40 mt-1 uppercase">{set.subtitle}</p>
+            <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/40 mt-1">
           )}
-          <div className="mt-3 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-300 group-hover:gap-4"
-            style={{ color: 'var(--accent)' }}>
-            <span>View Set</span><span>→</span>
-          </div>
-        </div>
+              <div className="mt-3 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-300 group-hover:gap-4"
+                style={{ color: 'var(--accent)' }}>
+                <span>View Set</span><span>→</span>
+              </div>
+            </div>
       </Link>
     </div>
   );

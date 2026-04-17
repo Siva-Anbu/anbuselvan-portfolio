@@ -77,7 +77,7 @@ export default async function CountriesPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-5">
-                  <h2 className="font-cormorant text-2xl text-white">{country.name}</h2>
+                  <h2 className="font-display text-2xl md:text-3xl font-light text-white">{country.name}</h2>
                   {country.years && (
                     <p className="text-xs text-white/50 mt-1">{country.years}</p>
                   )}

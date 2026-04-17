@@ -21,6 +21,13 @@ const photoQuotes = [
   { text: 'A good photograph is knowing where to stand.', author: 'Ansel Adams' },
   { text: 'The camera is an instrument that teaches people how to see without a camera.', author: 'Dorothea Lange' },
   { text: 'In photography there is a reality so subtle that it becomes more real than reality.', author: 'Alfred Stieglitz' },
+  { text: 'I don’t trust words. I trust pictures.', author: 'Gilles Peress' },
+  { text: 'Taking pictures is savoring life intensely, every hundredth of a second..', author: 'Marc Riboud' },
+  { text: 'Black and white photography erases time from the equation.', author: 'Jason Peterson' },
+  { text: 'The quickest way to make money at photography is to sell your camera.', author: 'Anonymous' },
+  { text: 'Don’t pack up your camera until you’ve left the location.', author: 'Joe McNally' },
+  { text: 'There are no bad pictures; that’s just how your face looks sometimes.', author: 'Abraham Lincoln' },
+  { text: 'The most colorful thing in the world is black and white, it contains all colors and at the same time excludes all.', author: 'Vikrmn' },
 ];
 
 // Fisher-Yates shuffle — returns a new shuffled array
@@ -37,11 +44,11 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
   // Shuffle images once on mount — useMemo with empty deps so it never re-shuffles mid-session
   const shuffledImages = useMemo(() => shuffle(images), []);
 
-  const [current, setCurrent]     = useState(0);
-  const [loading, setLoading]     = useState(true);
+  const [current, setCurrent] = useState(0);
+  const [loading, setLoading] = useState(true);
   // Start at a random quote index
   const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * photoQuotes.length));
-  const [quoteFade, setQuoteFade]   = useState(true);
+  const [quoteFade, setQuoteFade] = useState(true);
 
   const advance = useCallback(() => {
     setCurrent((c) => (c + 1) % shuffledImages.length);
@@ -124,12 +131,12 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
               fontStyle: 'italic',
               fontSize: 'clamp(1.1rem, 2.2vw, 1.5rem)',
               fontWeight: 300,
-              color: 'rgba(255,255,255,0.55)',
+              color: 'rgba(255,255,255,0.75)',
               lineHeight: 1.6,
             }}>
               &ldquo;{quote.text}&rdquo;
             </p>
-            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/30 mt-3">
+            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/60 mt-3">
               — {quote.author}
             </p>
           </div>

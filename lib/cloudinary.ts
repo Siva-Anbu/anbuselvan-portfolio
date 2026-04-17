@@ -4,26 +4,35 @@ const API_KEY = process.env.CLOUDINARY_API_KEY!;
 const API_SECRET = process.env.CLOUDINARY_API_SECRET!;
 
 // ── Tag definitions ───────────────────────────────────────────────────────────
+// Add "maternity" here so the system recognises it as a SET tag, not a country tag
 const TAG_TO_SET: Record<string, string> = {
   blackandwhite: "black-and-white",
   landscape: "landscape",
   lifescape: "lifescape",
   wildlife: "wildlife",
   drone: "drone",
+  maternity: "maternity",           // ← NEW
 };
 
 // ALL special/reserved tags — anything NOT in this list is treated as a country name
 const RESERVED_TAGS = new Set([
   "blackandwhite", "landscape", "lifescape", "wildlife", "drone",
   "hero", "portrait",
+  "maternity",                      // ← NEW — so it is never treated as a country
 ]);
 
-const SET_META: Record<string, { title: string; subtitle: string; order: number }> = {
-  landscape: { title: "Landscape", subtitle: "Earth, sky, and the space between", order: 3 },
-  "black-and-white": { title: "Black & White", subtitle: "When colour steps aside, truth remains", order: 1 },
-  lifescape: { title: "Lifescape", subtitle: "People, streets, and quiet human moments", order: 4 },
-  wildlife: { title: "Wildlife", subtitle: "Wild eyes, wild places", order: 5 },
-  drone: { title: "Drone", subtitle: "The world seen from above", order: 2 },
+const SET_META: Record<string, { title: string; subtitle: string; order: number; isPrivate?: boolean }> = {
+  landscape:       { title: "Landscape",    subtitle: "Earth, sky, and the space between",         order: 3 },
+  "black-and-white": { title: "Black & White", subtitle: "When colour steps aside, truth remains",  order: 1 },
+  lifescape:       { title: "Lifescape",    subtitle: "People, streets, and quiet human moments",   order: 4 },
+  wildlife:        { title: "Wildlife",     subtitle: "Wild eyes, wild places",                      order: 5 },
+  drone:           { title: "Drone",        subtitle: "The world seen from above",                   order: 2 },
+  maternity:       {                                                                                  // ← NEW
+    title: "Maternity",
+    subtitle: "Quiet, intimate moments before everything changes",
+    order: 6,
+    isPrivate: true,   // ← this drives ALL the blur/lock behaviour
+  },
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -47,6 +56,7 @@ export interface FeaturedSet {
   subtitle: string;
   coverImage: string;
   images: CloudinaryImage[];
+  isPrivate?: boolean;    // ← NEW — true only for sets like maternity
 }
 export type PhotoSet = FeaturedSet;
 
@@ -218,13 +228,20 @@ export async function getAllCountryNames(): Promise<string[]> {
   return countries.map((c) => c.name);
 }
 
-/** All featured sets */
+/** All featured sets — includes maternity with isPrivate: true */
 export async function getFeaturedSets(): Promise<FeaturedSet[]> {
   const allImages = await getAllImages();
   const sets: FeaturedSet[] = Object.entries(SET_META).map(([slug, meta]) => {
     const images = allImages.filter((img) => img.set === slug);
     const coverImage = images[0]?.url ?? "";
-    return { slug, ...meta, coverImage, images };
+    return {
+      slug,
+      title: meta.title,
+      subtitle: meta.subtitle,
+      coverImage,
+      images,
+      isPrivate: meta.isPrivate ?? false,   // ← pass isPrivate through to the page
+    };
   });
   return sets
     .filter((s) => s.images.length > 0)

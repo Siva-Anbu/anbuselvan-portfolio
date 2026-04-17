@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getSetBySlug, getAllSetSlugs, getFeaturedSets } from "@/lib/cloudinary";
 import SetGallery from "@/components/SetGallery";
-import PrivateSetGallery from "@/components/PrivateSetGallery";
+import ScrollingGallery from "@/components/ScrollingGallery";
 import Footer from "@/components/Footer";
 
 export const revalidate = 60;
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${set.title} — Anbuselvan Sivaraju`,
     description: set.isPrivate
-      ? `${set.title} — commissioned private work by Anbuselvan Sivaraju.`
+      ? `${set.title} — commissioned personal work by Anbuselvan Sivaraju.`
       : set.subtitle,
   };
 }
@@ -29,13 +29,13 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
   const set = await getSetBySlug(params.slug);
   if (!set) notFound();
 
-  const allSets    = await getFeaturedSets();
-  const idx        = allSets.findIndex((s) => s.slug === params.slug);
-  const prevSet    = idx > 0 ? allSets[idx - 1] : null;
-  const nextSet    = idx < allSets.length - 1 ? allSets[idx + 1] : null;
-  const isPrivate  = set.isPrivate === true;
+  const allSets  = await getFeaturedSets();
+  const idx      = allSets.findIndex((s) => s.slug === params.slug);
+  const prevSet  = idx > 0 ? allSets[idx - 1] : null;
+  const nextSet  = idx < allSets.length - 1 ? allSets[idx + 1] : null;
+  const isPrivate = set.isPrivate === true;
 
-  const gridImages = set.images.map((img) => ({
+  const galleryImages = set.images.map((img) => ({
     id:  img.id,
     url: img.url,
     alt: img.alt,
@@ -44,12 +44,13 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
   return (
     <main className="min-h-screen bg-[#0a0a0a]">
 
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
+      {/* ── HERO ──────────────────────────────────────────────────────────── */}
       {isPrivate ? (
-        // ── PRIVATE HERO — Option D blurred banner with lock badge + description
+
+        // ── PERSONAL SESSIONS HERO — clean, cinematic, no lock icon
         <div className="relative h-[55vh] overflow-hidden">
 
-          {/* Blurred cover image — scaled up slightly so blur edges don't show */}
+          {/* Blurred cover image */}
           {set.coverImage && (
             <Image
               src={set.coverImage}
@@ -61,11 +62,11 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
             />
           )}
 
-          {/* Dark overlay to make text readable over the blur */}
-          <div className="absolute inset-0 bg-black/55" />
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-black/60" />
 
           {/* Content */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center gap-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center gap-3">
 
             {/* Back link */}
             <Link
@@ -75,16 +76,8 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
               ← All Sets
             </Link>
 
-            {/* Lock icon */}
-            <div className="w-10 h-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm flex items-center justify-center">
-              <svg width="14" height="17" viewBox="0 0 14 17" fill="none">
-                <rect x="1" y="7" width="12" height="9" rx="2" stroke="white" strokeWidth="1.3" fill="rgba(255,255,255,0.12)" />
-                <path d="M4 7V5a3 3 0 0 1 6 0v2" stroke="white" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
-            </div>
-
             {/* Label */}
-            <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/35">
+            <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/30">
               Commissioned Work
             </p>
 
@@ -93,28 +86,20 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
               {set.title}
             </h1>
 
-            {/* Subtitle / tagline */}
-            <p className="text-white/55 font-body text-sm max-w-md">
+            {/* Subtitle */}
+            <p className="text-white/50 font-body text-sm max-w-md mt-1">
               {set.subtitle}
             </p>
 
-            {/* Private badge pill */}
-            <span className="inline-flex items-center gap-1.5 bg-white/10 border border-white/20 backdrop-blur-sm text-white/70 font-mono text-[10px] tracking-[0.2em] uppercase px-4 py-1.5 rounded-full">
-              <svg width="9" height="11" viewBox="0 0 9 11" fill="none" className="flex-shrink-0">
-                <rect x="0.75" y="4.5" width="7.5" height="6" rx="1.25" stroke="currentColor" strokeWidth="1.1" />
-                <path d="M2.5 4.5V3A2 2 0 0 1 6.5 3V4.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
-              </svg>
-              Private — Client Session
-            </span>
-
-            {/* Photo count */}
-            <p className="font-mono text-[10px] text-white/25 tracking-widest">
-              {set.images.length} photograph{set.images.length !== 1 ? "s" : ""}
+            {/* Scroll hint */}
+            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 mt-4">
+              Hover over images to reveal · scroll auto-plays below
             </p>
           </div>
         </div>
 
       ) : (
+
         // ── PUBLIC HERO — original layout unchanged
         <div className="relative h-[45vh] overflow-hidden">
           {set.coverImage && (
@@ -135,8 +120,12 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
             >
               ← All Sets
             </Link>
-            <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/30 mb-2">Featured Set</p>
-            <h1 className="font-display text-5xl md:text-7xl font-light text-white">{set.title}</h1>
+            <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/30 mb-2">
+              Featured Set
+            </p>
+            <h1 className="font-display text-5xl md:text-7xl font-light text-white">
+              {set.title}
+            </h1>
             <p className="text-white/50 mt-2 font-body text-sm">{set.subtitle}</p>
             <p className="font-mono text-[10px] text-white/25 mt-2 tracking-widest">
               {set.images.length} photograph{set.images.length !== 1 ? "s" : ""}
@@ -145,40 +134,39 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
         </div>
       )}
 
-      {/* ── PRIVATE INFO BANNER ──────────────────────────────────────────────── */}
-      {/* Shown below the hero for private sets — explains the blur to visitors */}
-      {isPrivate && (
-        <div className="px-6 md:px-12 max-w-[1600px] mx-auto pt-10 pb-2">
-          <div className="border border-white/8 bg-white/3 px-6 py-5 rounded-sm flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
-            <div className="flex-shrink-0">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="9" stroke="rgba(255,255,255,0.25)" strokeWidth="1.2" />
-                <path d="M10 9v5M10 7v.5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.4" strokeLinecap="round" />
-              </svg>
+      {/* ── GALLERY ───────────────────────────────────────────────────────── */}
+      {isPrivate ? (
+
+        // ── PERSONAL SESSIONS — full-width scrolling strip
+        <div className="py-16">
+          <ScrollingGallery images={galleryImages} />
+
+          {/* Booking nudge below the scroll strip */}
+          <div className="px-6 md:px-12 max-w-[1600px] mx-auto mt-16">
+            <div className="border border-white/8 bg-white/3 px-6 py-5 rounded-sm flex flex-col md:flex-row md:items-center gap-3 md:gap-6">
+              <p className="font-mono text-[11px] tracking-[0.1em] text-white/35 leading-relaxed">
+                These are personal commissioned sessions — maternity, couples, birthdays, and private events.
+                Interested in booking?{" "}
+                <Link
+                  href="/contact"
+                  className="text-white/55 underline underline-offset-2 hover:text-white/80 transition-colors"
+                >
+                  Get in touch
+                </Link>.
+              </p>
             </div>
-            <p className="font-mono text-[11px] tracking-[0.1em] text-white/35 leading-relaxed">
-              These photographs are from a commissioned private session. Images are blurred here
-              to protect client privacy. Interested in booking a similar session?{" "}
-              <Link href="/contact" className="text-white/55 underline underline-offset-2 hover:text-white/80 transition-colors">
-                Get in touch
-              </Link>.
-            </p>
           </div>
+        </div>
+
+      ) : (
+
+        // ── PUBLIC SETS — original masonry grid with lightbox
+        <div className="px-6 md:px-12 max-w-[1600px] mx-auto py-12">
+          <SetGallery images={galleryImages} />
         </div>
       )}
 
-      {/* ── GALLERY ──────────────────────────────────────────────────────────── */}
-      <div className="px-6 md:px-12 max-w-[1600px] mx-auto py-12">
-        {isPrivate ? (
-          // Private gallery — blurred images with lock overlays, no lightbox
-          <PrivateSetGallery images={gridImages} />
-        ) : (
-          // Public gallery — original component, lightbox enabled
-          <SetGallery images={gridImages} />
-        )}
-      </div>
-
-      {/* ── PREV / NEXT ───────────────────────────────────────────────────────── */}
+      {/* ── PREV / NEXT ───────────────────────────────────────────────────── */}
       <div className="px-6 md:px-12 max-w-[1600px] mx-auto pb-16">
         <div className="flex justify-between items-center pt-12 border-t border-white/5">
 

@@ -42,7 +42,7 @@ export default async function CountriesPage() {
           <p className="text-xs tracking-[0.25em] text-white/40 uppercase mb-4">
             Destinations
           </p>
-          <h1 className="font-mono text-5xl text-white/90 mb-8">
+          <h1 className="font-Cormorant Garamond text-5xl text-white/90 mb-8">
             Countries Visited
           </h1>
 

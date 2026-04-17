@@ -40,7 +40,7 @@ export default async function SetsPage() {
           <p className="text-xs tracking-[0.25em] text-white/40 uppercase mb-4">
             Curated Work
           </p>
-          <h1 className="font-mono text-5xl text-white/90">
+          <h1 className="font-Cormorant Garamond  text-5xl text-white/90">
             Featured Sets
           </h1>
         </div>

@@ -39,7 +39,7 @@ export default async function CountriesPage() {
       <div className="max-w-6xl mx-auto px-6">
         {/* Header */}
         <div className="mb-16">
-          <p className="text-xs tracking-[0.25em] text-white/40 uppercase mb-4">
+          <p className="font-display tracking-[0.25em] text-white/40 uppercase mb-4">
             Destinations
           </p>
           <h1 className="font-display text-5xl font-normal text-white/90 mb-8">

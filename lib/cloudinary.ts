@@ -4,34 +4,33 @@ const API_KEY = process.env.CLOUDINARY_API_KEY!;
 const API_SECRET = process.env.CLOUDINARY_API_SECRET!;
 
 // ── Tag definitions ───────────────────────────────────────────────────────────
-// Add "maternity" here so the system recognises it as a SET tag, not a country tag
 const TAG_TO_SET: Record<string, string> = {
-  blackandwhite: "black-and-white",
-  landscape: "landscape",
-  lifescape: "lifescape",
-  wildlife: "wildlife",
-  drone: "drone",
-  maternity: "maternity",           // ← NEW
+  blackandwhite:  "black-and-white",
+  landscape:      "landscape",
+  lifescape:      "lifescape",
+  wildlife:       "wildlife",
+  drone:          "drone",
+  commissioned:   "personal-sessions",   // Cloudinary tag → URL slug
 };
 
 // ALL special/reserved tags — anything NOT in this list is treated as a country name
 const RESERVED_TAGS = new Set([
   "blackandwhite", "landscape", "lifescape", "wildlife", "drone",
   "hero", "portrait",
-  "maternity",                      // ← NEW — so it is never treated as a country
+  "commissioned",   // never treat this as a country name
 ]);
 
 const SET_META: Record<string, { title: string; subtitle: string; order: number; isPrivate?: boolean }> = {
-  landscape:       { title: "Landscape",    subtitle: "Earth, sky, and the space between",         order: 3 },
-  "black-and-white": { title: "Black & White", subtitle: "When colour steps aside, truth remains",  order: 1 },
-  lifescape:       { title: "Lifescape",    subtitle: "People, streets, and quiet human moments",   order: 4 },
-  wildlife:        { title: "Wildlife",     subtitle: "Wild eyes, wild places",                      order: 5 },
-  drone:           { title: "Drone",        subtitle: "The world seen from above",                   order: 2 },
-  maternity:       {                                                                                  // ← NEW
-    title: "Maternity",
-    subtitle: "Quiet, intimate moments before everything changes",
-    order: 6,
-    isPrivate: true,   // ← this drives ALL the blur/lock behaviour
+  landscape:           { title: "Landscape",         subtitle: "Earth, sky, and the space between",           order: 3 },
+  "black-and-white":   { title: "Black & White",     subtitle: "When colour steps aside, truth remains",      order: 1 },
+  lifescape:           { title: "Lifescape",         subtitle: "People, streets, and quiet human moments",    order: 4 },
+  wildlife:            { title: "Wildlife",           subtitle: "Wild eyes, wild places",                      order: 5 },
+  drone:               { title: "Drone",              subtitle: "The world seen from above",                   order: 2 },
+  "personal-sessions": {
+    title:    "Personal Sessions",
+    subtitle: "People, occasions, and the moments between",
+    order:    6,
+    isPrivate: true,
   },
 };
 
@@ -56,7 +55,7 @@ export interface FeaturedSet {
   subtitle: string;
   coverImage: string;
   images: CloudinaryImage[];
-  isPrivate?: boolean;    // ← NEW — true only for sets like maternity
+  isPrivate?: boolean;
 }
 export type PhotoSet = FeaturedSet;
 
@@ -109,11 +108,11 @@ function buildImage(resource: any): CloudinaryImage {
   const tags: string[] = resource.tags ?? [];
   const context = resource.context?.custom ?? {};
 
-  // Set — must have an exact set tag
+  // Set — find the first tag that maps to a set slug
   const setTag = tags.find((t) => TAG_TO_SET[t.toLowerCase()]);
   const set = setTag ? TAG_TO_SET[setTag.toLowerCase()] : null;
 
-  // Country — any tag that is NOT reserved (not a set/hero/portrait tag)
+  // Country — any tag that is NOT reserved
   const countryTag = tags.find((t) => !RESERVED_TAGS.has(t.toLowerCase()));
   const country = countryTag ?? null;
 
@@ -131,8 +130,8 @@ function buildImage(resource: any): CloudinaryImage {
   return {
     id: resource.public_id,
     publicId: resource.public_id,
-    url: buildUrl(resource.public_id, "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
-    heroUrl: buildUrl(resource.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
+    url:      buildUrl(resource.public_id, "w_1200,q_85,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
+    heroUrl:  buildUrl(resource.public_id, "w_1920,q_88,f_auto,e_improve:40,e_sharpen:30/l_logo_sa,g_south_east,o_50,w_0.15"),
     thumbUrl: buildUrl(resource.public_id, "w_200,q_70,f_auto"),
     alt,
     tags,
@@ -175,20 +174,26 @@ export async function getAboutPortrait(): Promise<string | null> {
 
 /**
  * All portfolio images — ONE single Cloudinary query.
- * Fetches ALL uploaded images, then excludes hero/portrait-only assets.
- * This is fully dynamic — no hardcoded country list needed.
- * Adding a new country tag in Cloudinary is all that's required.
+ * Includes images that have a known SET tag even if they have no country tag.
+ * This fixes the issue where commissioned/private images (with only reserved tags)
+ * were being excluded from the results entirely.
  */
 export async function getAllImages(): Promise<CloudinaryImage[]> {
   const resources = await searchCloudinary("resource_type=image");
 
-  // Exclude images that have ONLY reserved tags (hero/portrait with no country or set)
   const seen = new Set<string>();
   return resources
     .filter((r) => {
       const tags: string[] = r.tags ?? [];
+
+      // Include if it has a non-reserved tag (country images, public sets)
       const hasNonReserved = tags.some((t: string) => !RESERVED_TAGS.has(t.toLowerCase()));
-      return hasNonReserved && !seen.has(r.public_id) && seen.add(r.public_id);
+
+      // ALSO include if it has a known SET tag — this covers commissioned/private
+      // images that have only reserved tags (e.g. only "commissioned")
+      const hasSetTag = tags.some((t: string) => TAG_TO_SET[t.toLowerCase()]);
+
+      return (hasNonReserved || hasSetTag) && !seen.has(r.public_id) && seen.add(r.public_id);
     })
     .map(buildImage);
 }
@@ -228,7 +233,7 @@ export async function getAllCountryNames(): Promise<string[]> {
   return countries.map((c) => c.name);
 }
 
-/** All featured sets — includes maternity with isPrivate: true */
+/** All featured sets */
 export async function getFeaturedSets(): Promise<FeaturedSet[]> {
   const allImages = await getAllImages();
   const sets: FeaturedSet[] = Object.entries(SET_META).map(([slug, meta]) => {
@@ -236,11 +241,11 @@ export async function getFeaturedSets(): Promise<FeaturedSet[]> {
     const coverImage = images[0]?.url ?? "";
     return {
       slug,
-      title: meta.title,
-      subtitle: meta.subtitle,
+      title:     meta.title,
+      subtitle:  meta.subtitle,
       coverImage,
       images,
-      isPrivate: meta.isPrivate ?? false,   // ← pass isPrivate through to the page
+      isPrivate: meta.isPrivate ?? false,
     };
   });
   return sets

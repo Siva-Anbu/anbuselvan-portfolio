@@ -28,6 +28,12 @@ const photoQuotes = [
   { text: "Don't pack up your camera until you've left the location.", author: 'Joe McNally' },
   { text: "There are no bad pictures; that's just how your face looks sometimes.", author: 'Abraham Lincoln' },
   { text: 'The most colorful thing in the world is black and white, it contains all colors and at the same time excludes all.', author: 'Vikrmn' },
+  { text: "Your first 10,000 photographs are your worst.", author: 'Henri Cartier-Bresson' },
+  { text: "The best camera is the one that's with you.", author: 'Chase Jarvis' },
+  { text: "Photography is a way of feeling, of touching, of loving.", author: 'Aaron Siskind' },
+  { text: "A camera didn’t make a great picture any more than a typewriter wrote a great novel.", author: 'Peter Adams' },
+  { text: "When I have a camera in my hand, I know no fear.", author: 'Alfred Eisenstaedt' },
+  { text: "How do we start taking pictures of people, and stop taking pictures of poses?", author: 'Justin and Mary Marantz' },
 ];
 
 // Fisher-Yates shuffle — returns a new shuffled array

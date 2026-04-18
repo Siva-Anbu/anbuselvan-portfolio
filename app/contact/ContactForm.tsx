@@ -65,17 +65,6 @@ export default function ContactForm() {
             <div className="space-y-6">
               <div>
                 <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 mb-1.5">
-                  Email
-                </p>
-                <a
-                  href="mailto:s.anbuselvan@gmail.com"
-                  className="font-body text-[13px] text-white/50 hover:text-white transition-colors"
-                >
-                  s.anbuselvan@gmail.com
-                </a>
-              </div>
-              <div>
-                <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 mb-1.5">
                   Based In
                 </p>
                 <p className="font-body text-[13px] text-white/50">

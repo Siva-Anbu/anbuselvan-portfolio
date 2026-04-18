@@ -1,3 +1,6 @@
+'use client';
+
+import React from 'react';
 import Link from 'next/link';
 import { Instagram } from 'lucide-react';
 
@@ -23,13 +26,12 @@ export default function Footer() {
               architecture, and still life reveal their silent poetry.
             </p>
 
-            {/* ✅ Fixed: proper <a> opening tag */}
 
             href="https://www.instagram.com/s.anbuselvan/"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 w-fit"
->
+            >
             <Instagram size={12} style={{ color: 'var(--accent)' }} />
             <p
               className="font-body text-[12px] leading-relaxed"
@@ -56,7 +58,7 @@ export default function Footer() {
           </Link>
         </div>
 
-      </div> {/* ✅ Fixed: closing tag for the grid div */}
+      </div>
 
       {/* Bottom bar */}
       <div className="mt-16 pt-6 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">

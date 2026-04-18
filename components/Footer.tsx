@@ -29,7 +29,7 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 w-fit"
-
+>
             <Instagram size={12} style={{ color: 'var(--accent)' }} />
             <p
               className="font-body text-[12px] leading-relaxed"

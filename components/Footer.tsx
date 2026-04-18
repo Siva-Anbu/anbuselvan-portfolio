@@ -8,6 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#080808] border-t border-white/5 py-16 px-6 md:px-12">
       <div className="max-w-[1600px] mx-auto">
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
 
           {/* Brand */}
@@ -25,7 +26,6 @@ export default function Footer() {
               Photographer documenting the world through his viewfinder, where people, travel,
               architecture, and still life reveal their silent poetry.
             </p>
-
 
             href="https://www.instagram.com/s.anbuselvan/"
             target="_blank"
@@ -58,7 +58,7 @@ export default function Footer() {
           </Link>
         </div>
 
-      </div>
+      </div>{/* ← closes grid div */}
 
       {/* Bottom bar */}
       <div className="mt-16 pt-6 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -70,7 +70,7 @@ export default function Footer() {
         </p>
       </div>
 
-    </div>
+    </div>{/* ← closes mx-auto div */ }
     </footer >
   );
 }

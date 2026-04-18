@@ -20,7 +20,10 @@ export default function Footer() {
               Photographer documenting the world through his viewfinder, where people, travel, architecture, and still life reveal their silent poetry.
             </p>
             <a href="https://www.instagram.com/s.anbuselvan/" target="_blank" rel="noopener noreferrer">
-              Instagram · @s.anbuselvan
+              <p className="font-body text-[12px] text-white/30 leading-relaxed max-w-xs">
+                style={{ color: 'var(--accent)' }}
+                Instagram · @s.anbuselvan
+              </p>
             </a>
           </div>
 

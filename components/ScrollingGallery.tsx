@@ -9,6 +9,7 @@
 // - Pure CSS animation — no JS timers, no requestAnimationFrame
 
 import Image from 'next/image';
+import { useMemo } from 'react';
 
 interface GalleryImage {
   id: string;
@@ -16,11 +17,24 @@ interface GalleryImage {
   alt: string;
 }
 
+// Fisher-Yates shuffle — returns a new randomly ordered array
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function ScrollingGallery({ images }: { images: GalleryImage[] }) {
-  // Duplicate images enough times to fill any screen width seamlessly.
+  // Shuffle once per mount — different order on every page visit
+  const shuffled = useMemo(() => shuffle(images), [images]);
+
+  // Duplicate shuffled images enough times to fill any screen width seamlessly.
   // We need at least ~20 items for the loop to feel infinite on large screens.
-  const repeatCount = Math.max(1, Math.ceil(20 / images.length));
-  const strip = Array.from({ length: repeatCount }, () => images).flat();
+  const repeatCount = Math.max(1, Math.ceil(20 / shuffled.length));
+  const strip = Array.from({ length: repeatCount }, () => shuffled).flat();
 
   return (
     <div className="w-full overflow-hidden" style={{ WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)' }}>

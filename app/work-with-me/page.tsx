@@ -45,7 +45,7 @@ const services = [
   {
     id: '04',
     title: 'Private Events',
-    description: 'Small gatherings, intimate ceremonies, family reunions. If it matters to you, it matters to me. I shoot quietly, move through spaces gently, and deliver work that endures.',
+    description: 'Concerts, small gatherings, intimate ceremonies, family reunions. If it matters to you, it matters to me. I shoot quietly, move through spaces gently, and deliver work that endures.',
     details: ['Custom duration', 'Flexible approach', 'Gallery tailored to the event'],
   },
 ];

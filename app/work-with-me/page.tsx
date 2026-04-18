@@ -49,6 +49,7 @@ const services = [
     details: ['Custom duration', 'Flexible approach', 'Gallery tailored to the event'],
   },
 ];
+const PRICING_LINE = 'Sessions from 999 DKK · Includes edited gallery';
 
 export default function WorkWithMePage() {
   return (
@@ -89,13 +90,28 @@ export default function WorkWithMePage() {
               </span>
               <h2 className="font-display text-3xl md:text-4xl font-light text-white mb-4">{service.title}</h2>
               <p className="font-body text-[13px] leading-[1.8] text-white/45 mb-6">{service.description}</p>
-              <ul className="space-y-2">
+              <ul className="space-y-2 mb-8">
                 {service.details.map((detail) => (
                   <li key={detail} className="flex items-center gap-3 font-mono text-[9px] tracking-[0.2em] uppercase text-white/30">
                     <span style={{ color: 'var(--accent)' }}>.</span>{detail}
                   </li>
                 ))}
               </ul>
+
+              {/* Pricing + CTA */}
+              <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <p className="font-mono text-[10px] tracking-[0.15em] text-white/35">
+                  {PRICING_LINE}
+                </p>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-300 group"
+                  style={{ color: 'var(--accent)' }}
+                >
+                  Book a conversation
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </Link>
+              </div>
             </div>
           ))}
         </div>

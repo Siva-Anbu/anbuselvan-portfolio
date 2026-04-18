@@ -26,51 +26,51 @@ export default function Footer() {
               Photographer documenting the world through his viewfinder, where people, travel,
               architecture, and still life reveal their silent poetry.
             </p>
+            <a
+              href="https://www.instagram.com/s.anbuselvan/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 w-fit"
+            >
+              <Instagram size={12} style={{ color: 'var(--accent)' }} />
+              <p
+                className="font-body text-[12px] leading-relaxed"
+                style={{ color: 'var(--accent)' }}
+              >
+                @s.anbuselvan
+              </p>
+            </a>
+          </div>
 
-            href="https://www.instagram.com/s.anbuselvan/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 w-fit"
-            >
-            <Instagram size={12} style={{ color: 'var(--accent)' }} />
-            <p
-              className="font-body text-[12px] leading-relaxed"
-              style={{ color: 'var(--accent)' }}
-            >
-              @s.anbuselvan
+          {/* Connect */}
+          <div>
+            <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 mb-5">
+              Connect
             </p>
-          </a>
+            <p className="font-body text-[12px] text-white/40 mb-4 leading-relaxed">
+              For collaborations, prints, or inquiries:
+            </p>
+            <Link
+              href="/contact"
+              className="font-mono text-[10px] tracking-[0.2em] uppercase border border-white/10 px-4 py-2.5 text-white/50 hover:text-white hover:border-white/30 transition-all inline-block"
+            >
+              Get In Touch
+            </Link>
+          </div>
+
         </div>
 
-        {/* Connect */}
-        <div>
-          <p className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 mb-5">
-            Connect
+        {/* Bottom bar */}
+        <div className="mt-16 pt-6 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/15">
+            © {new Date().getFullYear()} Anbuselvan Sivaraju. All rights reserved.
           </p>
-          <p className="font-body text-[12px] text-white/40 mb-4 leading-relaxed">
-            For collaborations, prints, or inquiries:
+          <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/15">
+            Photography · Moments
           </p>
-          <Link
-            href="/contact"
-            className="font-mono text-[10px] tracking-[0.2em] uppercase border border-white/10 px-4 py-2.5 text-white/50 hover:text-white hover:border-white/30 transition-all inline-block"
-          >
-            Get In Touch
-          </Link>
         </div>
 
-      </div>{/* ← closes grid div */}
-
-      {/* Bottom bar */}
-      <div className="mt-16 pt-6 border-t border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/15">
-          © {new Date().getFullYear()} Anbuselvan Sivaraju. All rights reserved.
-        </p>
-        <p className="font-mono text-[9px] tracking-[0.2em] uppercase text-white/15">
-          Photography · Moments
-        </p>
       </div>
-
-    </div>{/* ← closes mx-auto div */ }
-    </footer >
+    </footer>
   );
 }

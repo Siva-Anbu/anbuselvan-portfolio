@@ -61,7 +61,7 @@ export default function ScrollingGallery({ images }: { images: GalleryImage[] })
           100% { transform: translateX(-50%); }
         }
         .animate-scroll-left {
-          animation: scroll-left 40s linear infinite;
+          animation: scroll-left 70s linear infinite;
         }
         .animate-scroll-left:hover {
           animation-play-state: paused;

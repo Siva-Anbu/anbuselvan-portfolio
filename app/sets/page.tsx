@@ -9,12 +9,12 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: 'Featured Collections',
   description:
-    'Curated photography collections by Anbuselvan Sivaraju — Landscape, Black & White, Lifescape, Wildlife, and Drone photography from travels across 35+ countries.',
+    'Curated photography collections by Anbuselvan Sivaraju — Landscape, Black & White, Lifescape, Wildlife, and Aerial photography from travels across 35+ countries.',
   alternates: { canonical: 'https://anbuselvan-sivaraju.vercel.app/sets' },
   openGraph: {
     title: 'Featured Collections | Anbuselvan Sivaraju',
     description:
-      'Browse curated photography collections — landscape, street, drone, wildlife, and black & white photography.',
+      'Browse curated photography collections — landscape, street, aerial, wildlife, and black & white photography.',
     url: 'https://anbuselvan-sivaraju.vercel.app/sets',
     images: [
       {

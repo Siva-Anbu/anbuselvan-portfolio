@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     'travel photography',
     'street photography',
     'Copenhagen photographer',
-    'drone photography',
+    'aerial photography',
     'black and white photography',
     'Anbuselvan Sivaraju',
     'portrait photography Copenhagen',

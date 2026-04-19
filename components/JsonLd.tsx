@@ -27,7 +27,7 @@ export function JsonLd() {
     name: 'Anbuselvan Sivaraju Photography',
     url: 'https://anbuselvan-sivaraju.vercel.app',
     description:
-      'Photography portfolio of Anbuselvan Sivaraju — travel, street, drone, and black & white photography from 35+ countries.',
+      'Photography portfolio of Anbuselvan Sivaraju — travel, street, aerial, and black & white photography from 35+ countries.',
     author: {
       '@type': 'Person',
       name: 'Anbuselvan Sivaraju',

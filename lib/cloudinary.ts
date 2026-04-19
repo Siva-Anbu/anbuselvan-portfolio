@@ -25,7 +25,7 @@ const SET_META: Record<string, { title: string; subtitle: string; order: number;
   "black-and-white":   { title: "Black & White",     subtitle: "When colour steps aside, truth remains",      order: 1 },
   lifescape:           { title: "Lifescape",         subtitle: "People, streets, and quiet human moments",    order: 4 },
   wildlife:            { title: "Wildlife",           subtitle: "Wild eyes, wild places",                      order: 5 },
-  drone:               { title: "Drone",              subtitle: "The world seen from above",                   order: 2 },
+  drone:               { title: "Aerial",            subtitle: "The world seen from above",                   order: 2 },
   "personal-sessions": {
     title:    "Personal Sessions",
     subtitle: "People, occasions, and the moments between",

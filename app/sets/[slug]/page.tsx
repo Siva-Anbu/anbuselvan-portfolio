@@ -73,7 +73,7 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
               href="/sets"
               className="absolute top-6 left-6 md:left-12 font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors inline-flex items-center gap-2"
             >
-              ← All Sets
+              ← All Collections
             </Link>
 
             {/* Label */}
@@ -118,10 +118,10 @@ export default async function SetPage({ params }: { params: { slug: string } }) 
               href="/sets"
               className="font-mono text-[10px] tracking-[0.25em] uppercase text-white/40 hover:text-white/70 transition-colors mb-6 inline-flex items-center gap-2"
             >
-              ← All Sets
+              ← All Collections
             </Link>
             <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/30 mb-2">
-              Featured Set
+              Featured Collection
             </p>
             <h1 className="font-display text-5xl md:text-7xl font-light text-white">
               {set.title}

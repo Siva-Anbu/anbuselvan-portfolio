@@ -7,12 +7,12 @@ import { getFeaturedSets } from "@/lib/cloudinary";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Featured Sets',
+  title: 'Featured Collections',
   description:
     'Curated photography collections by Anbuselvan Sivaraju — Landscape, Black & White, Lifescape, Wildlife, and Drone photography from travels across 35+ countries.',
   alternates: { canonical: 'https://anbuselvan-sivaraju.vercel.app/sets' },
   openGraph: {
-    title: 'Featured Sets | Anbuselvan Sivaraju',
+    title: 'Featured Collections | Anbuselvan Sivaraju',
     description:
       'Browse curated photography collections — landscape, street, drone, wildlife, and black & white photography.',
     url: 'https://anbuselvan-sivaraju.vercel.app/sets',
@@ -40,7 +40,7 @@ export default async function SetsPage() {
             Curated Work
           </p>
           <h1 className="font-display text-5xl font-normal text-white/90 mb-8">
-            Featured Sets
+            Featured Collections
           </h1>
         </div>
 

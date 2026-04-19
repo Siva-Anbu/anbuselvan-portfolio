@@ -44,7 +44,7 @@ function SetCard({ set, index }: { set: FeaturedSet; index: number }) {
           )}
           <div className="mt-3 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase transition-all duration-300 group-hover:gap-4"
             style={{ color: 'var(--accent)' }}>
-            <span>View Set</span><span>&rarr;</span>
+            <span>View Collection</span><span>&rarr;</span>
           </div>
         </div>
       </Link>
@@ -60,10 +60,10 @@ export default function FeaturedSetsSection({ sets }: Props) {
       <div className="flex items-end justify-between mb-12 md:mb-16">
         <div>
           <p className="font-mono text-[10px] tracking-[0.35em] uppercase text-white/30 mb-3">Curated Work</p>
-          <h2 className="font-display text-4xl md:text-6xl font-light text-white">Featured Sets</h2>
+          <h2 className="font-display text-4xl md:text-6xl font-light text-white">Featured Collections</h2>
         </div>
         <Link href="/sets" className="hidden md:flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-white/40 hover:text-white/70 transition-colors">
-          <span>All sets</span><span>&rarr;</span>
+          <span>All Collections</span><span>&rarr;</span>
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
@@ -71,7 +71,7 @@ export default function FeaturedSetsSection({ sets }: Props) {
       </div>
       <div className="mt-12 text-center md:hidden">
         <Link href="/sets" className="font-mono text-[10px] tracking-[0.3em] uppercase border border-white/20 px-6 py-3 text-white/50 hover:text-white hover:border-white/40 transition-all">
-          View All Sets
+          View All Collections
         </Link>
       </div>
     </section>

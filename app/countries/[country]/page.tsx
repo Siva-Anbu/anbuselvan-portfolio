@@ -10,7 +10,7 @@ export const revalidate = 60;
 
 export async function generateStaticParams() {
   const names = await getAllCountryNames();
-  return names.map((country) => ({ country }));
+  return names.map((country) => ({ country: encodeURIComponent(country) }));
 }
 
 export async function generateMetadata({ params }: { params: { country: string } }) {
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: { country: string }
 }
 
 export default async function CountryPage({ params }: { params: { country: string } }) {
-  const country = await getCountryByName(params.country);
+  const country = await getCountryByName(decodeURIComponent(params.country));
   if (!country) notFound();
 
   const gridImages = country.images.map((img) => ({ id: img.id, url: img.url, alt: img.alt }));

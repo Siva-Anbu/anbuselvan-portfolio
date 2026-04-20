@@ -64,7 +64,7 @@ export default async function CountriesPage() {
           {countries.map((country) => (
             <Link
               key={country.name}
-              href={`/countries/${country.name}`}
+              href={`/countries/${encodeURIComponent(country.name)}`}
               className="group block"
             >
               <div className="relative aspect-[3/2] overflow-hidden bg-white/5">

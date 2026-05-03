@@ -37,7 +37,6 @@ export default function ImageGrid({ images, columns = 3 }: ImageGridProps) {
               draggable={false}
               className="object-cover"
               sizes="(max-width: 768px) 50vw, 33vw"
-              quality={80}
             />
 
             {/* Hover overlay */}

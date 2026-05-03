@@ -100,7 +100,7 @@ export default function HeroCarousel({ images }: HeroCarouselProps) {
           <div className="absolute inset-0"
             style={{ animation: i === current ? 'kenBurns 14s ease-in-out forwards' : 'none' }}>
             <Image src={img.heroUrl} alt={img.alt} fill priority={i === 0}
-              className="object-cover" sizes="100vw" quality={90}
+              className="object-cover" sizes="100vw"
               onLoad={() => i === 0 && setLoading(false)} />
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/80" />
